@@ -21,12 +21,14 @@ import { runMultiAgentAcceptanceTest } from "./src/server/orchestrator/acceptanc
 import { yaiMcpChaosRunner } from "./src/server/mcp/yaiChaosRunner";
 import { buildContractEnvelope, getRuntimeId } from "./src/server/vortexContract";
 import { ModelProviderId, Post } from "./src/types";
+import { registerYaiPlatformRoutes } from "./src/server/yaiPlatform";
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
   app.use(express.json({ limit: "10mb" }));
+  registerYaiPlatformRoutes(app);
 
   // --- Observability & Health Endpoints ---
 
