@@ -1,14 +1,15 @@
 {
-  "name": "react-example",
+  "name": "yai-molth",
   "private": true,
-  "version": "0.0.0",
+  "version": "2.0.0",
   "type": "module",
+  "license": "MIT",
   "scripts": {
-    "dev": "tsx server.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
-    "start": "node dist/server.cjs",
+    "dev": "tsx server-yai.ts",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs && esbuild server-yai.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server-yai.cjs",
+    "start": "NODE_ENV=production node dist/server-yai.cjs",
     "preview": "vite preview",
-    "clean": "rm -rf dist server.cjs",
+    "clean": "rm -rf dist server.cjs server-yai.cjs",
     "test": "vitest run && tsx tests/gos3_full_coverage.test.ts",
     "test:vitest": "vitest run",
     "lint": "tsc --noEmit"
@@ -31,6 +32,8 @@
     "@testing-library/react": "^16.3.2",
     "@types/express": "^4.17.21",
     "@types/node": "^22.14.0",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0",
     "@vitest/coverage-v8": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
@@ -38,7 +41,6 @@
     "tailwindcss": "^4.1.14",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3",
     "vitest": "^4.1.11"
   }
 }
