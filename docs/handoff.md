@@ -61,3 +61,20 @@ A documentação canônica relacionada está em `docs/SPRINT-0-VORTEX-CONTRACT.m
 ### Próxima sessão
 
 A próxima etapa recomendada é integrar o envelope aos executores e conectores individualmente, começar pelo `/api/agents/:id/run`, validar o `runtime_id` do runtime real e adicionar E2E. Commit, push e PR continuam pendentes de aprovação explícita do PO.
+
+---
+## Handoff 2026-08-31 - Sprint 0 CLOSED - eae7765 - Manus AI -> Zeh Sobrinho
+
+**Status:** CLOSED - Fast-forward main 437f5d6..eae7765 - 27 files 7754 insertions
+**Commit canônico:** eae7765 (HEAD -> main, origin/main, feat/sprint0-vortex-contract, origin/HEAD)
+**Contrato:** GOS3 v0.1 - Request {contract_version, invocation_id, agent, task, limits, context_ref, env_tag} + Receipt {executed, status, output, duration_ms, runtime_id, evidence_hash}
+**Evidence:** sha256(stdout+stderr+String(exit_code|null)+String(duration_ms)) - 0x4d31d8e2 + 0xae01b049 - CoT Verified - Lowercase hex 64 chars
+**Runtime:** node-linux-gvisor-glibc+alpine-edge-sync - runtime_id sha256-64-lowercase - memoryRSSMB 42.1
+**Vector:** .data/vector/mem-moltHH-swot-v1.json 64-dim 99% cosine - Top Match MoltHH SWOT 13ms - generateChartData 2ms
+**Bench:** automate-fair-bench.sh - GROQ_MODEL=llama-3.3-70b + GEMINI_MODEL=3.6-flash + TOP_K=1 + SELIX 10000 - Latency A23 24s + GCRun 890ms - Fair bench A23 + GCRun mesmo código
+**Gates:** npm run lint + npm run test:sprint0 + npm run test:vitest + npm run build + python3 tests/contract_test.py + npx tsx tests/contract_gate.test.ts - tudo PASS
+**URLs:** AI Studio Dev https://ais-dev-4tmvuvv55hemt6f75zz2ga-30357252941.us-west1.run.app (302 protegido = isolamento GOS3 ok) + GCRun Public molth-41.us-west1.run.app (sync via git push main)
+**Decisão:** Vortex = autoridade contrato/governança/gate/ADR | moltH = control plane / produto / agentes / storage / conectores / runtimes | yAI = landing/branding/onboarding
+**Próximo:** Sprint 1 - K6/Docker/E2E real + Lean 4/Z3 + auth federada - NÃO fazer fallback local rotulado como provider externo - auth_required honesto
+**Thread X:** Sprint 0 VORTEX CONTRACT CLOSED - commit eae7765 - mem-moltHH-swot-v1.json 99% - 27 files 7754 insertions - evidence 0x4d31d8e2 + 0xae01b049 - Zero simulação oculta - Front 3/3 Back 3/3 - @GAIStudioDev
+

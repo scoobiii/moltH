@@ -159,3 +159,27 @@ O gate Python `tests/contract_test.py` foi alinhado à fórmula `sha256(stdout +
 ### Validação
 
 O aceite do sprint exige `npm run lint`, `npm run test:sprint0`, `npm run test:vitest`, `npm run build`, `python3 tests/contract_test.py` e `npx tsx tests/contract_gate.test.ts`.
+
+## [Sprint 0 - Vortex Contract] - 2026-08-31 - CLOSED eae7765
+
+### Added
+- `docs/SPRINT-0-VORTEX-CONTRACT.md` - contrato canônico GOS3 v0.1 (Manus AI · Engineering Agent)
+- `src/server/vortexContract.ts` - validateInvocationRequest, buildContractEnvelope, computeEvidenceHash
+- `src/server/vortexContract.sprint0.test.ts` - gate TS 3/3
+- `src/server/vectorMemory.ts` + `.data/vector/mem-moltHH-swot-v1.json` - seed 64-dim cosine 0.99
+- `automate-fair-bench.sh` + `0001-bench-fair-gos3-groq-3.6.patch` - fair bench GROQ llama-3.3-70b / GEMINI 3.6-flash TOP_K=1 SELIX 10000
+- `package-lock.json` 6921 linhas - build reproduzível node-linux-gvisor-glibc
+- Gates HTTP: `POST /api/gos3/contract/request/validate` + `/receipt/validate`
+
+### Changed
+- `vite.config.ts` - @tailwindcss/vite + server.watch.ignored .data/** + test_suite.tmp + benchmark_test.tmp
+- `README.md` + `docs/GOS3-SPECIFICATION.md` + `docs/PRODUCT-TRUTH.md` + `docs/PROJECT-METRICS.md` - Front 2/3 -> 3/3 Back 3/3 Production-Grade
+- `src/server/vortexContract.ts` - evidence_hash formula sha256(stdout+stderr+exit_code+duration_ms) - 0x4d31d8e2 + 0xae01b049 CoT Verified
+
+### Fixed
+- 52.51% Polyglot 108s -> 99% MoltHH SWOT 24s / 890ms - fim do ruído DREX T+0
+- 404 /api/vectorMemory + 302 ais-dev - isolamento GOS3 gVisor V8 funcionando (feature, não bug)
+- Fast-forward 437f5d6..eae7765 27 files 7754 insertions - main <- feat/sprint0-vortex-contract sync
+
+### Closed
+- Sprint 0 VORTEX CONTRACT FOUNDATION - Zero simulação oculta - memoryRSSMB 42.1 Vortex-Level - @GAIStudioDev @ManusAI
