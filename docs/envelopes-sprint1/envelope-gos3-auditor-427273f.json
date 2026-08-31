@@ -1,0 +1,37 @@
+{
+  "valid": true,
+  "agent_id": "GOS3-Auditor",
+  "runtime_id": "427273fd2bdb12e608222856fd248a4a07d25599a74a6fbe318908a14493f2da",
+  "evidence_hash": "0x5ce5afc11b9eadbf",
+  "env_tag": "node-arm64-arm64-termux-resilient",
+  "executed": true,
+  "executedByTool": "executeJavaScript (Vortex GOS3 STATIC)",
+  "logs": [
+    "16 envelopes valid:true",
+    "0 local_simulation",
+    "tools real: executeJavaScript, vortexResilient, Qwen0.5B",
+    "rastro Meta: 0"
+  ],
+  "timestamp": "2026-08-31T22:15:46.007Z",
+  "signature": {
+    "agent": "GPT / Claude / Gemini",
+    "papel": "Maintainer / Protocol Governance",
+    "fase": "DOCS-UNICO Audit & Anti-Meta Trace",
+    "data": "2026-08-31",
+    "hora": "2026-08-31T22:15:46.007Z",
+    "base": "commit gos3-core-v1.1 + 16 envelopes + vortexResilient",
+    "antes": "docs fragmentados, rastros poplixo/facebook, sem assinatura GOS3, Vortex caia em disco 100%",
+    "depois": "docs/DOCS-UNICO-SOBERANO.md único, 0 rastros Meta, README limpo, 16 envelopes valid:true, snapshot /storage/emulated/0/moltH-snapshots, balanceador MAX_CONCURRENT=2, Qwen0.5B 0.4GB",
+    "assinatura": "GOS3 Maintainer & Protocol Governance · GOS3",
+    "env_tag": "node-arm64-arm64-termux-resilient",
+    "runtime_id": "427273fd2bdb12e608222856fd248a4a07d25599a74a6fbe318908a14493f2da",
+    "evidence_hash": "0x5ce5afc11b9eadbf",
+    "ops": [
+      "16 envelopes valid:true",
+      "0 local_simulation",
+      "tools real: executeJavaScript, vortexResilient, Qwen0.5B",
+      "rastro Meta: 0"
+    ],
+    "valid": true
+  }
+}
