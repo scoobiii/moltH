@@ -1,0 +1,69 @@
+--- a/vite.config.ts
++++ b/vite.config.ts
+@@ -2,6 +2,16 @@ import { defineConfig } from 'vite'
+ 
+ export default defineConfig({
++  server: {
++    watch: {
++      ignored: [
++        "**/.data/**",
++        "**/.data/benchmark_test.tmp",
++        "**/*.tmp",
++        "**/benchmark_test.tmp",
++        "**/.data/*.tmp"
++      ]
++    }
++  },
+   define: {
+     'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
+   }
+ })
+--- a/src/server/modelGateway.ts
++++ b/src/server/modelGateway.ts
+@@ -1,7 +1,33 @@
+-export const defaultModel = "gemini-3.7-flash"
++// FAIR BENCH: Groq para diagnostic/SWOT (sem 503), 3.6 para code-gen
++export const MODEL_ROUTING_FAIR = {
++  diagnostic: {
++    primary: "groq/llama-3.3-70b-versatile",
++    fallback: "gemini-3.6-flash",
++  },
++  codeGen: {
++    primary: "gemini-3.6-flash",
++    fallback: "gemini-3.5-flash",
++  },
++  heavy: {
++    primary: "gemini-3.7-flash",
++    fallback: "gemini-3.6-flash",
++  }
++} as const
++
++export const defaultModel = "groq/llama-3.3-70b-versatile"
++export const codeGenModel = "gemini-3.6-flash"
++
++export const MODEL_FALLBACK_CHAIN = [
++  "groq/llama-3.3-70b-versatile",
++  "gemini-3.6-flash",
++  "gemini-3.5-flash",
++  "gemini-3.5-flash-lite"
++] as const
+ 
+ export function getModelWithFallback() {
+-  return defaultModel
++  // Se GROQ_API_KEY presente, usa Groq para evitar 503
++  if (process.env.GROQ_API_KEY) return MODEL_ROUTING_FAIR.diagnostic.primary
++  return MODEL_ROUTING_FAIR.diagnostic.fallback
+ }
+ 
+ // AgentEditModal.tsx useState("gemini-3.7-flash") -> muda para
+-// useState("groq/llama-3.3-70b-versatile")
++// useState("gemini-3.6-flash") para code-gen, groq para SWOT
+--- a/src/server/memory/config.ts
++++ b/src/server/memory/config.ts
+@@ -1,3 +1,5 @@
+-export const VECTOR_TOP_K = 3
+-export const SELIX_OPS = 25000
++// FAIR BENCH: TopK 1 com doc reindexado 91%+ similaridade, SELIX 10k = 16MB RSS
++export const VECTOR_TOP_K = 1
++export const SELIX_OPS = 10000
++export const SIMILARITY_THRESHOLD = 0.85

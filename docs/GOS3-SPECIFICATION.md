@@ -1,9 +1,9 @@
 > **GOS3** · agente: `Claude / SeniorOpsScrum / Gemini` · papel: `Arquiteto / Formal Verifier & Protocol Governance` (ver docs/team.md)
-> fase: `Technical Refinement (E4) & Visual Analytics Release` · data: `2026-08-22` · hora: `18:45:00 UTC`
-> antes: Especificação formal e completa do Protocolo GOS3 v1.0
-> depois: Especificação formal atualizada GOS3 v1.2 (Anti-Fabricação, Zero Fake Provider INC-002, Nx1 Sandbox, SHA-256 e Contrato v0.3)
-> base: commit `gos3-core-v1.2`
-> assinatura: `Claude & Gemini · Arquiteto & Protocol Governance · GOS3`
+> fase: `Sprint 0 — Vortex Contract Foundation` · data: `2026-08-30` · hora: `UTC`
+> antes: Especificação v1.2 com envelope legado divergente do runtime
+> depois: Especificação GOS3 alinhada ao contrato canônico v0.1 implementado no moltH
+> base: branch `feat/sprint0-vortex-contract`
+> assinatura: `Manus AI · Protocol Maintainer · GOS3`
 
 # Especificação Formal do Protocolo GOS3 (v1.0)
 ## GOS3: Gang of Seven Open Specification & Anti-Fabrication Standard
@@ -39,37 +39,44 @@ Todo artefato de código, documentação, especificação ou log gerado por qual
 
 ---
 
-## 3. Contrato Unificado de Invocação e Resposta
+## 3. Contrato Unificado de Invocação e Resposta — Sprint 0 v0.1
 
-### 3.1. Envelope de Invocação (Request)
+A especificação normativa detalhada está em [`specs/invocation-contract-v0.1.md`](specs/invocation-contract-v0.1.md). O envelope abaixo é a única forma canônica para a integração atual.
+
+### 3.1. Request
 ```typescript
 interface GOS3InvocationRequest {
-  invocation_id: string;          // UUID v4 único
-  agent: string;                  // Identificador do agente (ex: Claude, Gemini, Grok, Qwen, DeepSeek, GPT)
-  action: string;                 // Nome da ação/ferramenta solicitada
-  payload: Record<string, any>;   // Parâmetros da ferramenta
-  context: {
-    sandbox: boolean;             // Forçar isolamento estrito
-    timeout_ms: number;           // Timeout rígido de execução
-    dry_run?: boolean;            // Modo de simulação explícita
+  contract_version: "v0.1";
+  invocation_id: string;
+  agent: string;
+  task: {
+    kind: "code_exec" | "shell" | "tool_call" | "llm_inference";
+    payload: string;
+    language?: string;
   };
+  limits: { timeout_seconds: number; max_output_bytes: number };
+  context_ref?: string;
+  env_tag?: string;
 }
 ```
 
-### 3.2. Recibo de Execução (Response)
+### 3.2. Receipt
 ```typescript
-interface GOS3ExecutionReceipt {
-  invocation_id: string;          // Eco exato do request
-  agent: string;                  // Nome do agente executor
-  executed: boolean;              // true se e somente se houve computação real
-  success: boolean;               // Sucesso operacional da ferramenta
-  data?: any;                     // Retorno estruturado do processo
-  error?: string | null;          // Mensagem de erro ou null
-  logs: string[];                 // Logs de auditoria do stdout/stderr
-  executionTimeMs: number;        // Duração precisa em milissegundos
-  evidenceHash: string;           // Hash SHA-256 (0x...) de prova imutável
+interface GOS3ContractEnvelope<T = unknown> {
+  contract_version: "v0.1";
+  invocation_id: string;
+  agent: string;
+  executed: boolean;
+  status: "success" | "failed" | "error" | "partial" | "timeout" | "auth_required";
+  output: T;
+  duration_ms: number;
+  truncated: boolean;
+  runtime_id: string;
+  evidence_hash: string;
 }
 ```
+
+A fórmula de evidência é `sha256(stdout + stderr + String(exit_code | "null") + String(duration_ms))`. `success` exige `executed:true`; `auth_required`, `timeout` e `error` exigem `executed:false`. A implementação deve rejeitar hash forjado, runtime_id inválido, campos ausentes e estados inconsistentes.
 
 ---
 

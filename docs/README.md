@@ -49,3 +49,10 @@ docs/
 3. **Isolamento Nx1 + Estado NxN**: Cada agente roda no seu próprio runtime confinado (V8 VM / subprocesso dedicado) com pipes auditáveis e persistência atômica SQLite WAL.
 
 
+
+
+## Atualização 2026-08-30 — Sprint 0
+
+O documento canônico do Sprint 0 está em [`SPRINT-0-VORTEX-CONTRACT.md`](SPRINT-0-VORTEX-CONTRACT.md). A especificação normativa atualizada está em [`specs/invocation-contract-v0.1.md`](specs/invocation-contract-v0.1.md). O contrato é implementado em `../src/server/vortexContract.ts`, com testes em `../src/server/vortexContract.sprint0.test.ts` e gate interoperável em `../tests/contract_test.py`.
+
+Os endpoints read-only de validação são `POST /api/gos3/contract/request/validate` e `POST /api/gos3/contract/receipt/validate`. O Sprint 0 não altera as alegações de produção, autenticação federada, Lean/Z3, K6 externo ou runtime remoto; essas capacidades continuam sujeitas a validação própria.

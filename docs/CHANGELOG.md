@@ -144,3 +144,18 @@ Todas as alterações notáveis neste projeto são documentadas neste arquivo, s
 - Inicialização do board de agentes (Gemini, Claude, GPT, Grok, Qwen, DeepSeek).
 - Adaptador de referência Grok (`npm run test:grok` com 19/19 testes aprovados).
 - Criação das diretrizes de governança e playbook inicial (`docs/PLAYBOOK.md`).
+
+
+## [Unreleased] — Sprint 0 Vortex Contract Foundation — 2026-08-30
+
+### Adicionado
+
+Implementado o contrato GOS3 v0.1 canônico em `src/server/vortexContract.ts`, com request, receipt, `runtime_id`, estados explícitos, hash de evidência determinístico e validação de falsificação. Adicionados os endpoints read-only `/api/gos3/contract/request/validate` e `/api/gos3/contract/receipt/validate`, além da suíte dedicada `src/server/vortexContract.sprint0.test.ts`.
+
+### Corrigido
+
+O gate Python `tests/contract_test.py` foi alinhado à fórmula `sha256(stdout + stderr + exit_code + duration_ms)`. A especificação v0.1, README, backlog e PRODUCT-TRUTH foram atualizados para diferenciar contrato implementado de sandbox, autenticação federada, providers externos, Lean/Z3 e deployment ainda não comprovados.
+
+### Validação
+
+O aceite do sprint exige `npm run lint`, `npm run test:sprint0`, `npm run test:vitest`, `npm run build`, `python3 tests/contract_test.py` e `npx tsx tests/contract_gate.test.ts`.

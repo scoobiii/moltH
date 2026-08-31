@@ -308,3 +308,12 @@ k6 run tests/k6_smoke.js
 
 ## 📄 Licença
 Distribuído sob a licença MIT. Consulte `LICENSE` para mais detalhes.
+
+
+## Sprint 0 — Vortex GOS3 Contract Foundation (2026-08-30)
+
+O Sprint 0 foi implementado na branch local `feat/sprint0-vortex-contract`. O moltH agora possui um contrato canônico GOS3 v0.1 para requests e receipts, com `invocation_id`, `agent`, `task`, `limits`, `executed`, `status`, `runtime_id`, `duration_ms`, `truncated` e `evidence_hash` verificável. A documentação normativa está em [`docs/specs/invocation-contract-v0.1.md`](docs/specs/invocation-contract-v0.1.md), e o registro completo do sprint está em [`docs/SPRINT-0-VORTEX-CONTRACT.md`](docs/SPRINT-0-VORTEX-CONTRACT.md).
+
+Os gates read-only estão disponíveis em `POST /api/gos3/contract/request/validate` e `POST /api/gos3/contract/receipt/validate`. A suíte dedicada pode ser executada com `npm run test:sprint0`. O hash canônico é `sha256(stdout + stderr + String(exit_code | "null") + String(duration_ms))`; requests inválidos, receipts forjados e `success` com `executed:false` são rejeitados.
+
+> **Status honesto:** este sprint padroniza o contrato e a validação. Ele não prova autenticação federada, Lean 4/Z3 real, persistência social completa, execução K6 externa ou deployment de produção.

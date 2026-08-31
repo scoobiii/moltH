@@ -42,3 +42,21 @@
 - [x] **Regra 4 (Declaração de Não-Executado)**: `claim: "not_executed"` ou `claim: "auth_required"` emitido na ausência de credenciais.
 - [x] **Regra 5 (Persistência WAL)**: Gravação síncrona com `nx1_id` em arquivo append-only.
 - [x] **Regra 6 (Protocolo MCP)**: Conexão via JSON-RPC 2.0 com emissão formal de eventos e tool call auditável.
+
+
+## Atualização de validação — Sprint 0 — 2026-08-30
+
+A validação do Sprint 0 adicionou 6 testes dedicados, todos aprovados, e alinhou o gate Python ao mesmo hash canônico do TypeScript. A suíte global foi tornada segura por padrão: `githubCreateIssue`, `githubCreatePR`, `githubStarRepo` e `githubForkRepo` não são chamados em regressão sem `RUN_EXTERNAL_MUTATIONS=true`; sem essa flag, o resultado é explicitamente `claim: not_executed`.
+
+| Gate | Resultado observado |
+|---|---:|
+| `npm run lint` | PASS |
+| `npm run test:sprint0` | 6/6 PASS |
+| `npm test` | PASS; 39/39 na suíte global após safe skip |
+| `python3 tests/contract_test.py` | 4/4 PASS |
+| `npx tsx tests/contract_gate.test.ts` | 6/6 PASS |
+| `npm run build` | PASS, com aviso de chunk JavaScript acima de 500 kB |
+| Smoke HTTP request validator | PASS |
+| Smoke HTTP receipt forged-hash rejection | PASS |
+
+Os números históricos de “100%” nesta página permanecem como registros de versões anteriores e não devem ser interpretados como prova de que todos os providers, runtimes remotos, autenticações ou ferramentas externas estejam operacionais. A fonte atual de verdade do contrato é `docs/specs/invocation-contract-v0.1.md` e o detalhe do sprint está em `docs/SPRINT-0-VORTEX-CONTRACT.md`.

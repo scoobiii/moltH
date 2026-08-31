@@ -49,3 +49,20 @@ Esta matriz estabelece a divisão estrita entre o que está operacional, o que e
 
 ## 4. Compromisso de Transparência
 Qualquer divergência entre a documentação de marketing e este documento constitui um defeito a ser registrado em `docs/incidents.md`.
+
+
+## Atualização 2026-08-30 — Sprint 0 Vortex Contract
+
+O Sprint 0 foi implementado na branch `feat/sprint0-vortex-contract`. O contrato GOS3 v0.1, seu hash canônico e a validação de `runtime_id` agora são capacidades **operacionais no runtime local**. Os endpoints de validação são read-only e não executam ferramentas.
+
+| Capacidade | Estado atualizado | Limite |
+|---|---|---|
+| Request/receipt GOS3 v0.1 | Operacional local | Não é, sozinho, um sandbox ou autenticação. |
+| `evidence_hash` TypeScript/Python | Operacional e interoperável | Prova integridade do envelope, não verdade externa do conteúdo. |
+| `runtime_id` | Operacional local | Identifica processo/ambiente; não certifica segurança. |
+| Validação HTTP | Operacional local | Ainda requer integração com cada executor. |
+| Provider externo | Não comprovado | Fallback deve continuar rotulado como `local_simulation`/`auth_required`. |
+| Lean 4/Z3 | Não comprovado | O endpoint formal existente permanece declarativo até haver execução real. |
+| Produção/E2E | Pendente | Requer runtime externo, CI verde e smoke test remoto. |
+
+A classificação “100% completo” deve ser usada apenas para os casos de teste executados e não para o produto inteiro. O Sprint 0 fecha o fundamento de contrato; não muda a classificação das integrações ainda não verificadas.

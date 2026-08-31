@@ -13,8 +13,18 @@ import hashlib
 import sys
 
 def compute_hash(payload: dict) -> str:
-    unhashed = {k: v for k, v in payload.items() if k != "evidence_hash"}
-    canonical = json.dumps(unhashed, sort_keys=True)
+    """Sprint 0 canonical hash: stdout + stderr + exit_code + duration_ms."""
+    output = payload.get("output") or {}
+    if isinstance(output, dict):
+        stdout = output.get("stdout", "") if isinstance(output.get("stdout", ""), str) else ""
+        stderr = output.get("stderr", "") if isinstance(output.get("stderr", ""), str) else ""
+        exit_code = output.get("exit_code")
+    else:
+        stdout = output if isinstance(output, str) else json.dumps(output, sort_keys=True)
+        stderr = ""
+        exit_code = 0 if payload.get("executed", True) else 1
+    exit_text = "null" if exit_code is None else str(exit_code)
+    canonical = f"{stdout}{stderr}{exit_text}{payload.get('duration_ms', 0)}"
     return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
 
 def validate(payload: dict) -> tuple[bool, str]:
@@ -56,6 +66,7 @@ def main():
         "input": {"code": "print(123456)"},
         "output": {"stdout": "123456\n", "exit_code": 0},
         "status": "success",
+        "executed": True,
         "duration_ms": 42,
         "contract_version": "v0.1",
         "invocation_id": "inv-123456-abc",

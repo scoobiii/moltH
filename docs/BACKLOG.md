@@ -75,3 +75,18 @@
 - [ ] Emissão e ancoragem periódica de árvores Merkle de execução em rede blockchain pública
 - [ ] Monitoramento contínuo de drift semântico nos embeddings de memória vetorial
 - [ ] Expansão de ferramentas de análise física para microredes e inversores híbridos grid-forming
+
+
+## Sprint 0 — Vortex GOS3 Contract Foundation — [IMPLEMENTADO LOCALMENTE]
+
+- [x] Definir `GOS3InvocationRequest` v0.1 com task, limits e `invocation_id`
+- [x] Definir `GOS3ContractEnvelope` v0.1 com status, executed, runtime_id e evidence_hash
+- [x] Implementar hash canônico interoperável TypeScript/Python
+- [x] Rejeitar request inválido, receipt forjado, runtime_id inválido e `success` com `executed:false`
+- [x] Adicionar gates read-only `/api/gos3/contract/request/validate` e `/api/gos3/contract/receipt/validate`
+- [x] Adicionar suíte dedicada `src/server/vortexContract.sprint0.test.ts`
+- [x] Alinhar `tests/contract_test.py` ao hash canônico
+- [x] Atualizar README, especificação v0.1, PRODUCT-TRUTH e CHANGELOG
+- [ ] Integrar o envelope em todos os executores e conectores externos
+- [ ] Validar um runtime remoto com `runtime_id` e evidência real
+- [ ] Abrir PR após revisão e confirmação do PO

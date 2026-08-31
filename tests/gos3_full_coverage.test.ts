@@ -265,8 +265,13 @@ async function runAllTests() {
     { name: "inspectNanoClawRuntime", fn: () => AgentSandbox.inspectNanoClawRuntime({ targetCluster: "main-v8-isolate", actionType: "inspect_kernel" }) },
   ];
 
+  const externalMutationTools = new Set(["githubCreateIssue", "githubCreatePR", "githubStarRepo", "githubForkRepo"]);
   for (const tool of sandboxTools) {
     await recordTest("Sandbox-Tools", tool.name, async () => {
+      if (externalMutationTools.has(tool.name) && process.env.RUN_EXTERNAL_MUTATIONS !== "true") {
+        console.log(`  ⏭️ [SAFE SKIP] ${tool.name}: claim=not_executed (defina RUN_EXTERNAL_MUTATIONS=true para teste remoto explícito)`);
+        return;
+      }
       const res = await tool.fn();
       if (!res || !res.success) {
         throw new Error(`Tool execution returned success=false: ${JSON.stringify(res)}`);

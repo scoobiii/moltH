@@ -46,3 +46,18 @@ curl -s -X POST https://ais-dev-4tmvuvv55hemt6f75zz2ga-30357252941.us-west1.run.
 - `docs/incidents.md` (INC-001 & INC-002)
 - `docs/PROJECT-METRICS.md`
 - `docs/CHANGELOG.md`
+
+
+## Handoff 2026-08-30 — Sprint 0 Vortex Contract
+
+A branch local `feat/sprint0-vortex-contract` implementa a fundação do contrato Vortex GOS3 v0.1. O código principal está em `src/server/vortexContract.ts`, com `GOS3InvocationRequest`, `GOS3ContractEnvelope`, `validateInvocationRequest`, `buildContractEnvelope`, `computeEvidenceHash` e `validateContractEnvelope`.
+
+Foram adicionados os endpoints read-only `POST /api/gos3/contract/request/validate` e `POST /api/gos3/contract/receipt/validate`. A suíte dedicada `npm run test:sprint0` passou em 6/6. O gate Python passou em 4/4; o gate TypeScript existente passou em 6/6; `npm run lint` passou; `npm test` passou em 39/39 após safe skip explícito das mutações GitHub; e `npm run build` passou com aviso de chunk frontend acima de 500 kB.
+
+As mutações GitHub não devem ser executadas durante regressão por padrão. Os casos `githubCreateIssue`, `githubCreatePR`, `githubStarRepo` e `githubForkRepo` só podem ser executados com `RUN_EXTERNAL_MUTATIONS=true` e confirmação operacional apropriada. Sem isso, o resultado correto é `claim: not_executed`.
+
+A documentação canônica relacionada está em `docs/SPRINT-0-VORTEX-CONTRACT.md`, `docs/specs/invocation-contract-v0.1.md`, `docs/GOS3-SPECIFICATION.md`, `docs/PRODUCT-TRUTH.md`, `docs/BACKLOG.md`, `docs/CHANGELOG.md` e `docs/README.md`.
+
+### Próxima sessão
+
+A próxima etapa recomendada é integrar o envelope aos executores e conectores individualmente, começar pelo `/api/agents/:id/run`, validar o `runtime_id` do runtime real e adicionar E2E. Commit, push e PR continuam pendentes de aprovação explícita do PO.

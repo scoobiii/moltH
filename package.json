@@ -11,6 +11,7 @@
     "clean": "rm -rf dist server.cjs",
     "test": "vitest run && tsx tests/gos3_full_coverage.test.ts",
     "test:vitest": "vitest run",
+    "test:sprint0": "vitest run src/server/vortexContract.sprint0.test.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

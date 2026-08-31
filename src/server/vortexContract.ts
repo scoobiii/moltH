@@ -31,9 +31,48 @@ export interface ExecutionProof {
   timestamp: string;
 }
 
+export type GOS3Status = "success" | "failed" | "error" | "partial" | "timeout" | "auth_required";
+export type GOS3TaskKind = "code_exec" | "shell" | "tool_call" | "llm_inference";
+
+export interface GOS3InvocationRequest {
+  contract_version: "v0.1";
+  invocation_id: string;
+  agent: string;
+  task: {
+    kind: GOS3TaskKind;
+    payload: string;
+    language?: string;
+  };
+  limits: {
+    timeout_seconds: number;
+    max_output_bytes: number;
+  };
+  context_ref?: string;
+  env_tag?: string;
+}
+
+export function validateInvocationRequest(request: unknown): { valid: boolean; reason?: string } {
+  if (!request || typeof request !== "object") return { valid: false, reason: "request inválido" };
+  const value = request as any;
+  if (value.contract_version !== "v0.1") return { valid: false, reason: "contract_version deve ser v0.1" };
+  if (typeof value.invocation_id !== "string" || value.invocation_id.length === 0) return { valid: false, reason: "invocation_id obrigatório" };
+  if (typeof value.agent !== "string" || value.agent.length === 0) return { valid: false, reason: "agent obrigatório" };
+  if (!value.task || typeof value.task !== "object" || !["code_exec", "shell", "tool_call", "llm_inference"].includes(value.task.kind)) {
+    return { valid: false, reason: "task.kind inválido" };
+  }
+  if (typeof value.task.payload !== "string") return { valid: false, reason: "task.payload deve ser string" };
+  if (!value.limits || !Number.isInteger(value.limits.timeout_seconds) || value.limits.timeout_seconds <= 0) {
+    return { valid: false, reason: "limits.timeout_seconds deve ser inteiro positivo" };
+  }
+  if (!value.limits || !Number.isInteger(value.limits.max_output_bytes) || value.limits.max_output_bytes <= 0) {
+    return { valid: false, reason: "limits.max_output_bytes deve ser inteiro positivo" };
+  }
+  return { valid: true };
+}
+
 export interface GOS3ContractEnvelope<T = any> {
   executed: boolean;
-  status: "success" | "failed";
+  status: GOS3Status;
   output: T;
   duration_ms: number;
   evidence_hash: string;
@@ -48,11 +87,43 @@ export const sha256 = (s: string): string =>
   createHash("sha256").update(s, "utf-8").digest("hex");
 
 /**
+ * Canonical Sprint 0 evidence hash. The exact byte-level inputs are kept
+ * intentionally small and portable across TypeScript/Python consumers.
+ */
+export function computeEvidenceHash(params: {
+  stdout?: string;
+  stderr?: string;
+  exit_code?: number | null;
+  duration_ms: number;
+}): string {
+  const stdout = params.stdout ?? "";
+  const stderr = params.stderr ?? "";
+  const exitCode = params.exit_code == null ? "null" : String(params.exit_code);
+  return sha256(`${stdout}${stderr}${exitCode}${params.duration_ms}`);
+}
+
+function evidenceParts(envelope: GOS3ContractEnvelope): {
+  stdout: string;
+  stderr: string;
+  exit_code: number | null;
+} {
+  const output = envelope.output as any;
+  if (output && typeof output === "object" && !Array.isArray(output)) {
+    return {
+      stdout: typeof output.stdout === "string" ? output.stdout : "",
+      stderr: typeof output.stderr === "string" ? output.stderr : "",
+      exit_code: typeof output.exit_code === "number" ? output.exit_code : null,
+    };
+  }
+  return { stdout: typeof output === "string" ? output : JSON.stringify(output ?? ""), stderr: "", exit_code: envelope.executed ? 0 : 1 };
+}
+
+/**
  * Gera o runtime_id único e determinístico para a instância atual (64 hex characters).
  * Distingue formalmente instâncias Termux/Android, Cloud Run, VPS ou Isolate.
  */
 export function getRuntimeId(): string {
-  const envTag = process.env.GOS3_ENV_TAG || process.env.K_SERVICE ? "cloud-run" : "node-linux";
+  const envTag = process.env.GOS3_ENV_TAG || (process.env.K_SERVICE ? "cloud-run" : "node-linux");
   const hostname = os.hostname() || "localhost";
   const platform = os.platform() || "linux";
   const arch = os.arch() || "x64";
@@ -67,24 +138,32 @@ export function buildContractEnvelope<T = any>(params: {
   agent: string;
   output: T;
   duration_ms: number;
-  status?: "success" | "failed";
+  status?: GOS3Status;
+  executed?: boolean;
   truncated?: boolean;
   invocation_id?: string;
   rawStdout?: string;
   rawStderr?: string;
-  exitCode?: number;
+  exitCode?: number | null;
 }): GOS3ContractEnvelope<T> {
-  const status = params.status || "success";
-  const executed = status === "success";
+  const status: GOS3Status = params.status || "success";
+  const executed = params.executed ?? status === "success";
   const invocation_id = params.invocation_id || `inv-${Date.now()}-${randomUUID().slice(0, 8)}`;
   const runtime_id = getRuntimeId();
 
-  // Cálculo canônico do evidence_hash conforme ADR-002 e ADR-003:
-  // sha256(stdout + stderr + exit_code + duration_ms) ou sha256(canonical JSON)
-  const stdout = params.rawStdout ?? (typeof params.output === "string" ? params.output : JSON.stringify(params.output));
-  const stderr = params.rawStderr ?? "";
-  const exitCode = params.exitCode ?? (status === "success" ? 0 : 1);
-  const evidence_hash = sha256(`${stdout}${stderr}${exitCode}${params.duration_ms}`);
+  // Cálculo canônico do Sprint 0:
+  // sha256(stdout + stderr + exit_code + duration_ms)
+  const outputRecord = params.output && typeof params.output === "object" ? params.output as any : undefined;
+  const stdout = params.rawStdout ?? (typeof params.output === "string" ? params.output : outputRecord?.stdout ?? JSON.stringify(params.output));
+  const stderr = params.rawStderr ?? outputRecord?.stderr ?? "";
+  const outputExitCode = outputRecord && Object.prototype.hasOwnProperty.call(outputRecord, "exit_code") ? outputRecord.exit_code : undefined;
+  const exitCode = params.exitCode !== undefined ? params.exitCode : outputExitCode !== undefined ? outputExitCode : status === "success" ? 0 : 1;
+  const evidence_hash = computeEvidenceHash({
+    stdout,
+    stderr,
+    exit_code: exitCode,
+    duration_ms: params.duration_ms,
+  });
 
   return {
     executed,
@@ -127,16 +206,54 @@ export function validateContractEnvelope(envelope: any): { valid: boolean; reaso
     }
   }
 
-  if (typeof envelope.evidence_hash !== "string" || envelope.evidence_hash.length !== 64) {
-    return { valid: false, reason: "evidence_hash deve ser string hex de 64 caracteres" };
+  if (typeof envelope.executed !== "boolean") {
+    return { valid: false, reason: "executed deve ser booleano" };
   }
 
-  if (typeof envelope.runtime_id !== "string" || envelope.runtime_id.length !== 64) {
-    return { valid: false, reason: "runtime_id deve ser string hex de 64 caracteres (ADR-003)" };
+  const allowedStatuses: GOS3Status[] = ["success", "failed", "error", "partial", "timeout", "auth_required"];
+  if (!allowedStatuses.includes(envelope.status)) {
+    return { valid: false, reason: `status inválido: ${String(envelope.status)}` };
+  }
+
+  if (typeof envelope.duration_ms !== "number" || !Number.isFinite(envelope.duration_ms) || envelope.duration_ms < 0) {
+    return { valid: false, reason: "duration_ms deve ser número finito não negativo" };
+  }
+
+  if (typeof envelope.truncated !== "boolean") {
+    return { valid: false, reason: "truncated deve ser booleano" };
+  }
+
+  if (typeof envelope.invocation_id !== "string" || envelope.invocation_id.length === 0) {
+    return { valid: false, reason: "invocation_id deve ser string não vazia" };
+  }
+
+  if (typeof envelope.agent !== "string" || envelope.agent.length === 0) {
+    return { valid: false, reason: "agent deve ser string não vazia" };
+  }
+
+  if (typeof envelope.evidence_hash !== "string" || !/^[0-9a-f]{64}$/.test(envelope.evidence_hash)) {
+    return { valid: false, reason: "evidence_hash deve ser string hex lowercase de 64 caracteres" };
+  }
+
+  if (typeof envelope.runtime_id !== "string" || !/^[0-9a-f]{64}$/.test(envelope.runtime_id)) {
+    return { valid: false, reason: "runtime_id deve ser string hex lowercase de 64 caracteres (ADR-003)" };
   }
 
   if (envelope.contract_version !== "v0.1") {
     return { valid: false, reason: `Versão de contrato não suportada: ${envelope.contract_version}` };
+  }
+
+  const parts = evidenceParts(envelope);
+  const expectedHash = computeEvidenceHash({ ...parts, duration_ms: envelope.duration_ms });
+  if (envelope.evidence_hash !== expectedHash) {
+    return { valid: false, reason: `evidence_hash inválido; esperado ${expectedHash}` };
+  }
+
+  if (envelope.status === "success" && !envelope.executed) {
+    return { valid: false, reason: "status success exige executed=true" };
+  }
+  if (envelope.status === "auth_required" && envelope.executed) {
+    return { valid: false, reason: "status auth_required exige executed=false" };
   }
 
   return { valid: true };

@@ -38,3 +38,22 @@
   - Handoff de contexto entre agentes prioriza sempre injeção direta de texto/código ou leitura de artefatos locais auditáveis (`scrape_repo.py`).
   - É proibido presumir que outro agente ou instância conseguirá ler URLs de terceiros sem tool call real auditável em sandbox com conectividade liberada.
   - Na impossibilidade de acesso, o agente deve registrar `claim: "not_executed"` em conformidade com o ADR-002.
+
+
+## ADR-004: Vortex como GOS3 Core Único e moltH como Control Plane
+
+> **GOS3** · agente: `Manus AI` · papel: `Architecture / Protocol Maintainer`
+> fase: `Sprint 0 — Vortex Contract Foundation` · data: `2026-08-30` · hora: `UTC`
+> antes: Contratos v0.1/v0.3 sobrepostos entre Vortex e moltH
+> depois: Vortex como autoridade de contrato/gate; moltH como produto/control plane; yAI como UX pública
+> base: `feat/sprint0-vortex-contract`
+> assinatura: `Manus AI · Architecture · GOS3`
+
+- **Status**: Implementado no clone local; publicação remota pendente de aprovação do PO.
+- **Contexto**: Vortex, moltH e yAI possuem capacidades complementares, mas manter dois GOS3, dois sistemas de identidade ou dois runtimes canônicos causaria divergência de proveniência.
+- **Decisão**:
+  - Vortex mantém invocation contract, validação, `evidence_hash`, `runtime_id`, gates, ADRs e critérios de proveniência.
+  - moltH mantém UI do produto, autenticação, agentes, ferramentas, storage, MCP, conectores e control plane.
+  - yAI fornece landing, branding, onboarding e componentes de entrada, sem criar outro backend.
+  - Toda execução futura deve retornar o envelope GOS3 v0.1 antes de ser apresentada como sucesso.
+- **Consequência**: O Sprint 0 implementa a fronteira de contrato no moltH e deixa integração de runtime remoto, autenticação federada e E2E para sprints posteriores.
