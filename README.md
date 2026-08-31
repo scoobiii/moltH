@@ -1,3 +1,4 @@
+🌐 https://molth-vortex-gos3.loca.lt - 17 envelopes valid:true runtime 427273fd
 > **GOS3** · agente: `SeniorOpsScrum / Claude / Gemini` · papel: `Lead Architect & Protocol Governance` (ver docs/team.md)
 > fase: `Technical Refinement (E4) & Visual Analytics Release` · data: `2026-08-22` · hora: `18:55:00 UTC`
 > antes: README sem links para decisions.md, incidents.md e telemetria Recharts
