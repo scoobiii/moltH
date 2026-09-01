@@ -1,0 +1,17 @@
+{
+  "project": "Molt Hybrid Hub - Vortex GOS3",
+  "repo": "scoobiii/moltH",
+  "branch": "main",
+  "runtime_id": "427273fd",
+  "sprints": [
+    { "id": "SPRINT-1", "name": "Runtime Reference Grok", "status": "CONCLUÍDO", "progress": 100 },
+    { "id": "SPRINT-2", "name": "Generalização Hardening Subprocessos", "status": "CONCLUÍDO", "progress": 100 },
+    { "id": "SPRINT-3", "name": "WAL + Cluster Load Balancer", "status": "CONCLUÍDO", "progress": 100 },
+    { "id": "SPRINT-4", "name": "Benchmark 25 Tools GOS3", "status": "CONCLUÍDO", "progress": 100 },
+    { "id": "SPRINT-5", "name": "INC-002 + ADR-003 + Recharts", "status": "CONCLUÍDO", "progress": 100 },
+    { "id": "SPRINT-6", "name": "Runtime ID Zero SDK + Contrato v0.1", "status": "CONCLUÍDO", "progress": 100 },
+    { "id": "SPRINT-0", "name": "Vortex Contract Foundation", "status": "IMPLEMENTADO LOCAL", "progress": 70 }
+  ],
+  "last_sync": "2026-08-22T18:55:00Z",
+  "ga_page_url": "https://molth-vortex-gos3.loca.lt"
+}
