@@ -7,6 +7,7 @@ import {
 } from "./molth/types"
 import { 
   DEFAULT_USER, 
+  GUEST_USER,
   INITIAL_AGENTS, 
   INITIAL_MESSAGES, 
   INITIAL_POSTS 
@@ -46,16 +47,16 @@ import {
   HelpCircle
 } from "lucide-react"
 
-const STORAGE_KEY = "molth_gos3_state_v2"
+const STORAGE_KEY = "molth_gos3_state_v3"
 
 export default function YAIMoltH() {
   // Global State with LocalStorage Persistence
   const [currentUser, setCurrentUser] = useState<UserAuthProfile>(() => {
     try {
       const saved = localStorage.getItem(`${STORAGE_KEY}_user`)
-      return saved ? JSON.parse(saved) : DEFAULT_USER
+      return saved ? JSON.parse(saved) : GUEST_USER
     } catch {
-      return DEFAULT_USER
+      return GUEST_USER
     }
   })
 
@@ -191,9 +192,9 @@ export default function YAIMoltH() {
 
     const userMsg: ChatMessage = {
       id: `msg-${Date.now()}`,
-      sender: currentUser.name,
+      sender: currentUser.isLoggedIn ? currentUser.name : "Visitante (@guest)",
       role: "user",
-      avatar: currentUser.avatar,
+      avatar: currentUser.isLoggedIn ? currentUser.avatar : "👤",
       content: chatInput,
       timestamp: new Date().toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
     }
@@ -379,19 +380,42 @@ export default function YAIMoltH() {
         {/* User Card in Sidebar */}
         <div className="mt-5 p-3 rounded-2xl bg-[#171620] border border-[#2c2b3c] flex items-center justify-between">
           <div className="flex items-center gap-2.5 truncate">
-            <span className="text-xl">{currentUser.avatar}</span>
+            <span className="text-xl shrink-0">{currentUser.avatar}</span>
             <div className="truncate">
-              <div className="text-xs font-bold text-white truncate">{currentUser.name}</div>
-              <div className="text-[10px] text-[#baa19e] truncate font-mono">{currentUser.email}</div>
+              <div className="text-xs font-bold text-white truncate flex items-center gap-1.5">
+                <span>{currentUser.name}</span>
+                {currentUser.isLoggedIn && (
+                  <span className="text-[9px] px-1.5 py-0.2 bg-[#331b19] text-[#ffb4a8] rounded font-bold uppercase shrink-0">
+                    {currentUser.provider}
+                  </span>
+                )}
+              </div>
+              <div className="text-[10px] text-[#baa19e] truncate font-mono">
+                {currentUser.isLoggedIn ? currentUser.handle : "Modo Visitante"}
+              </div>
             </div>
           </div>
-          <button
-            onClick={() => setIsAuthModalOpen(true)}
-            className="p-1.5 rounded-lg bg-[#271816] text-[#ffb4a8] hover:bg-[#381e1a] transition-colors"
-            title="Gerenciar Conta & Login/Logout"
-          >
-            <Key className="w-3.5 h-3.5" />
-          </button>
+          <div className="flex items-center gap-1 shrink-0">
+            {currentUser.isLoggedIn && (
+              <button
+                onClick={() => {
+                  setCurrentUser(GUEST_USER)
+                  showToast("Sessão desconectada com sucesso.")
+                }}
+                className="p-1.5 rounded-lg bg-[#271816] text-[#ffb4a8] hover:bg-[#381e1a] transition-colors"
+                title="Sair (Logout)"
+              >
+                <LogOut className="w-3.5 h-3.5" />
+              </button>
+            )}
+            <button
+              onClick={() => setIsAuthModalOpen(true)}
+              className="p-1.5 rounded-lg bg-[#271816] text-[#ffb4a8] hover:bg-[#381e1a] transition-colors"
+              title={currentUser.isLoggedIn ? "Gerenciar Conta" : "Entrar / Cadastrar"}
+            >
+              <Key className="w-3.5 h-3.5" />
+            </button>
+          </div>
         </div>
 
         {/* Footer */}
@@ -449,13 +473,44 @@ export default function YAIMoltH() {
               />
             </div>
 
-            <button
-              onClick={() => setIsAuthModalOpen(true)}
-              className="px-3 py-1.5 rounded-full bg-[#251717] border border-[#542724] text-[#ffb4a8] text-xs font-medium flex items-center gap-1.5 hover:bg-[#381e1c] transition-all"
-            >
-              <span>{currentUser.avatar}</span>
-              <span className="hidden xs:inline">{currentUser.isLoggedIn ? "Conta / Logout" : "Entrar com Google"}</span>
-            </button>
+            {currentUser.isLoggedIn ? (
+              <div className="flex items-center gap-1.5">
+                <button
+                  onClick={() => setIsAuthModalOpen(true)}
+                  className="px-3 py-1.5 rounded-full bg-[#251717] border border-[#542724] text-[#ffb4a8] text-xs font-medium flex items-center gap-1.5 hover:bg-[#381e1c] transition-all"
+                  title="Gerenciar Conta"
+                >
+                  <span>{currentUser.avatar}</span>
+                  <span className="hidden xs:inline">{currentUser.name}</span>
+                  <span className="text-[9px] px-1 bg-[#3d1e1a] rounded text-[#ffb4a8] font-bold uppercase">
+                    {currentUser.provider}
+                  </span>
+                </button>
+                <button
+                  onClick={() => {
+                    setCurrentUser(GUEST_USER)
+                    showToast("Sessão desconectada com sucesso.")
+                  }}
+                  className="p-1.5 rounded-full bg-[#1e1414] border border-[#42201d] text-[#ffb4a8] hover:bg-[#331a17] transition-all"
+                  title="Fazer Logout"
+                >
+                  <LogOut className="w-3.5 h-3.5" />
+                </button>
+              </div>
+            ) : (
+              <button
+                onClick={() => setIsAuthModalOpen(true)}
+                className="px-3.5 py-1.5 rounded-full bg-gradient-to-r from-[#ffb4a8] to-[#ff9887] text-black text-xs font-bold flex items-center gap-1.5 hover:opacity-95 active:scale-95 shadow-md transition-all"
+              >
+                <svg className="w-3.5 h-3.5" viewBox="0 0 24 24">
+                  <path fill="#EA4335" d="M12 5c1.6 0 3 .6 4.1 1.6l3.1-3.1C17.3 1.7 14.8 1 12 1 7.5 1 3.7 3.6 1.9 7.3l3.7 2.9C6.5 7.4 9 5 12 5z" />
+                  <path fill="#4285F4" d="M23.5 12.3c0-.8-.1-1.6-.2-2.3H12v4.6h6.5c-.3 1.5-1.1 2.8-2.4 3.7l3.7 2.9c2.2-2 3.7-5 3.7-8.9z" />
+                  <path fill="#FBBC05" d="M5.6 14.8c-.2-.7-.4-1.5-.4-2.3 0-.8.2-1.6.4-2.3L1.9 7.3C.7 9.7 0 12.3 0 15.1s.7 5.4 1.9 7.8l3.7-2.9z" />
+                  <path fill="#34A853" d="M12 23.5c3.2 0 6-1.1 8-3l-3.7-2.9c-1.1.7-2.5 1.2-4.3 1.2-3 0-5.5-2.4-6.4-5.2L1.9 16.5C3.7 20.4 7.5 23.5 12 23.5z" />
+                </svg>
+                <span>Entrar / Cadastrar</span>
+              </button>
+            )}
           </div>
         </header>
 
@@ -596,23 +651,47 @@ export default function YAIMoltH() {
 
             {settingsTab === "General" && (
               <div className="mt-4 bg-[#14141c] border border-[#272736] rounded-2xl p-5 space-y-4">
-                <div className="flex items-center gap-3">
-                  <div className="text-3xl">{currentUser.avatar}</div>
-                  <div>
-                    <div className="text-base font-bold text-white">{currentUser.name}</div>
-                    <div className="text-xs text-[#c9a09c]">{currentUser.role}</div>
-                    <div className="text-[10px] text-emerald-400 font-mono mt-0.5">
-                      Chave Root: {currentUser.walletAddress}
+                <div className="flex items-center justify-between flex-wrap gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="text-3xl">{currentUser.avatar}</div>
+                    <div>
+                      <div className="text-base font-bold text-white flex items-center gap-2">
+                        <span>{currentUser.name}</span>
+                        <span className={`text-[10px] px-2 py-0.5 rounded-full font-bold uppercase ${
+                          currentUser.isLoggedIn ? "bg-[#ffb4a8] text-black" : "bg-[#252532] text-[#baa19e]"
+                        }`}>
+                          {currentUser.isLoggedIn ? currentUser.provider : "Visitante"}
+                        </span>
+                      </div>
+                      <div className="text-xs text-[#c9a09c]">{currentUser.role}</div>
+                      {currentUser.isLoggedIn && (
+                        <div className="text-[10px] text-emerald-400 font-mono mt-0.5">
+                          Chave Root: {currentUser.walletAddress}
+                        </div>
+                      )}
                     </div>
                   </div>
+
+                  {currentUser.isLoggedIn && (
+                    <button
+                      onClick={() => {
+                        setCurrentUser(GUEST_USER)
+                        showToast("Sessão desconectada.")
+                      }}
+                      className="px-3 py-1.5 rounded-xl bg-[#2b1816] text-[#ffb4a8] border border-[#522925] text-xs font-semibold hover:bg-[#3d1e1a] flex items-center gap-1.5 transition-all"
+                    >
+                      <LogOut className="w-3.5 h-3.5" />
+                      <span>Sair da Conta</span>
+                    </button>
+                  )}
                 </div>
 
-                <div className="pt-3 border-t border-[#22222e] flex items-center justify-between">
+                <div className="pt-3 border-t border-[#22222e] flex items-center justify-between flex-wrap gap-2">
                   <button
                     onClick={() => setIsAuthModalOpen(true)}
-                    className="px-4 py-2 rounded-xl bg-[#ffb4a8] text-black font-semibold text-xs hover:opacity-90"
+                    className="px-4 py-2 rounded-xl bg-[#ffb4a8] text-black font-bold text-xs hover:opacity-90 transition-all"
                   >
-                    Gerenciar Login & Chave Soberana
+                    {currentUser.isLoggedIn ? "Gerenciar Login & Chave Soberana" : "Entrar com Google ou @/Senha"}
                   </button>
 
                   <button
@@ -621,7 +700,7 @@ export default function YAIMoltH() {
                       showToast("Estado persistente resetado!")
                       window.location.reload()
                     }}
-                    className="px-3 py-2 rounded-xl bg-[#241718] text-[#ffb4a8] border border-[#4a2e2b] text-xs"
+                    className="px-3 py-2 rounded-xl bg-[#241718] text-[#ffb4a8] border border-[#4a2e2b] text-xs hover:bg-[#331c1a] transition-all"
                   >
                     Limpar Cache Local
                   </button>
@@ -656,32 +735,38 @@ export default function YAIMoltH() {
         )}
 
         {/* Sticky Prompt Bar */}
-        <div className="sticky bottom-16 md:bottom-3 z-30 px-4 pt-2 max-w-4xl mx-auto w-full">
-          <div className="bg-[#181822]/95 backdrop-blur-md border border-[#36364a] rounded-2xl p-2 sm:p-2.5 shadow-2xl flex items-center gap-2">
+        <div className="sticky bottom-16 md:bottom-3 z-30 px-3 sm:px-4 pt-1 max-w-4xl mx-auto w-full">
+          <div className="bg-[#181822]/95 backdrop-blur-md border border-[#36364a] rounded-2xl p-2 sm:p-2.5 shadow-2xl flex items-end gap-2">
             <button
               onClick={() => {
                 const queryText = chatInput.endsWith("@") ? chatInput : `${chatInput}@`
                 handleInputChangeWithAutocomplete(queryText)
               }}
-              className="px-2.5 py-1.5 rounded-xl bg-[#291b1a] text-[#ffb4a8] border border-[#4d2825] text-xs font-semibold flex items-center gap-1 hover:bg-[#382220] transition-colors shrink-0"
+              className="px-2.5 py-2 rounded-xl bg-[#291b1a] text-[#ffb4a8] border border-[#4d2825] text-xs font-semibold flex items-center gap-1 hover:bg-[#382220] transition-colors shrink-0 mb-0.5"
               title="Invocar Agente com @"
             >
               <AtSign className="w-3.5 h-3.5" />
               <span className="hidden xs:inline">Agente (@)</span>
             </button>
 
-            <input
-              type="text"
+            <textarea
+              rows={1}
               value={chatInput}
-              onChange={(e) => handleInputChangeWithAutocomplete(e.target.value)}
+              onChange={(e) => {
+                handleInputChangeWithAutocomplete(e.target.value)
+                // Auto adjust height
+                e.target.style.height = "auto"
+                e.target.style.height = `${Math.min(e.target.scrollHeight, 120)}px`
+              }}
               onKeyDown={(e) => {
-                if (e.key === "Enter") {
+                if (e.key === "Enter" && !e.shiftKey) {
+                  e.preventDefault()
                   if (activeNav !== "chat") setActiveNav("chat")
                   handleSendMessage()
                 }
               }}
               placeholder="Pergunte qualquer coisa ou digite '@' para autocompletar 20 agentes..."
-              className="flex-1 bg-transparent text-xs sm:text-sm text-white placeholder-[#8a6b68] focus:outline-none"
+              className="flex-1 bg-transparent text-xs sm:text-sm text-white placeholder-[#8a6b68] focus:outline-none resize-none min-h-[32px] max-h-28 py-1.5 leading-relaxed font-sans"
             />
 
             <button
@@ -690,7 +775,7 @@ export default function YAIMoltH() {
                 handleSendMessage()
               }}
               disabled={!chatInput.trim()}
-              className={`p-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 ${
+              className={`p-2 sm:px-3.5 sm:py-2 rounded-xl text-xs font-bold flex items-center gap-1.5 transition-all shrink-0 mb-0.5 ${
                 chatInput.trim()
                   ? "bg-[#ffb4a8] text-black shadow-lg hover:opacity-90 active:scale-95"
                   : "bg-[#252532] text-[#735855] cursor-not-allowed"

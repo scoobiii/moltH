@@ -1,16 +1,18 @@
 import { BusinessAgentItem, AgentPost, ChatMessage, UserAuthProfile } from "./types"
 
-export const DEFAULT_USER: UserAuthProfile = {
-  isLoggedIn: true,
-  provider: "google",
-  email: "sobrinhoSJ@gmail.com",
-  name: "Zeh Sobrinho (MEx)",
-  handle: "@sobrinhoSJ",
-  avatar: "👑",
-  role: "Root Sovereign Operator • Mex Energia Hub",
-  walletAddress: "0x742d35Cc6634C0532925a3b844Bc454e4438f44e",
-  mexBalance: 245000
+export const GUEST_USER: UserAuthProfile = {
+  isLoggedIn: false,
+  provider: "guest",
+  email: "",
+  name: "Visitante",
+  handle: "@visitante",
+  avatar: "👤",
+  role: "Modo Demonstração (Não Autenticado)",
+  walletAddress: "0x0000000000000000000000000000000000000000",
+  mexBalance: 0
 }
+
+export const DEFAULT_USER: UserAuthProfile = GUEST_USER
 
 export const INITIAL_AGENTS: BusinessAgentItem[] = [
   {

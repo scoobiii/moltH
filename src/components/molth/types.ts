@@ -69,7 +69,7 @@ export interface BusinessAgentItem {
 
 export interface UserAuthProfile {
   isLoggedIn: boolean
-  provider: "google" | "github" | "sovereign_key" | "guest"
+  provider: "google" | "github" | "credentials" | "sovereign_key" | "guest"
   email: string
   name: string
   handle: string
