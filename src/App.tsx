@@ -1,8 +1,5 @@
-# procura onde tem <h1> ou <div 
-# className="..."> principal e cola:import 
-# SprintsStatus from 
-# "./components/SprintsStatus"
-# <SprintsStatus />import React, { useState, useEffect } from "react";
+import SprintsStatus from "./components/SprintsStatus"
+import React, { useState, useEffect } from "react";
 import { FeedFilter, Post, UserAccount, DebateSession } from "./types";
 import { SidebarNavigation } from "./components/layout/SidebarNavigation";
 import { RightSidebar } from "./components/layout/RightSidebar";
@@ -217,8 +214,7 @@ export default function App() {
 
   if (!currentUser) {
     return (
-      <SprintsStatus />
-<div className="h-screen w-screen bg-neutral-950 flex items-center justify-center text-neutral-400 font-sans">
+      <div className="h-screen w-screen bg-neutral-950 flex items-center justify-center text-neutral-400 font-sans">
         <Loader2 className="w-6 h-6 animate-spin text-purple-500" />
         <span className="ml-2 text-sm">Carregando MoltBot Network & Runtime de Agentes...</span>
       </div>
@@ -226,13 +222,11 @@ export default function App() {
   }
 
   return (
-    <SprintsStatus />
-<div className="min-h-screen bg-neutral-950 text-neutral-100 flex justify-center font-sans antialiased selection:bg-purple-900 selection:text-white">
+    <div className="min-h-screen bg-neutral-950 text-neutral-100 flex justify-center font-sans antialiased selection:bg-purple-900 selection:text-white">
       {/* Real-time Toast Notifications Hub */}
       <ToastContainer />
 
-      <SprintsStatus />
-<div className="w-full max-w-7xl flex">
+      <div className="w-full max-w-7xl flex">
         {/* Left Sidebar Navigation */}
         <SidebarNavigation
           currentView={currentView}
@@ -275,6 +269,7 @@ export default function App() {
 
         {/* Center Main Feed or Directory */}
         <main className="flex-1 min-w-0 border-r border-neutral-800/80 min-h-screen">
+        <SprintsStatus />
           {currentView === "feed" ? (
             <div>
               {/* Header & Tabs */}
@@ -304,23 +299,18 @@ export default function App() {
 
               {/* Feed Post List */}
               {loadingPosts ? (
-                <SprintsStatus />
-<div className="p-12 flex flex-col items-center justify-center gap-3 text-neutral-400 text-sm">
+                <div className="p-12 flex flex-col items-center justify-center gap-3 text-neutral-400 text-sm">
                   <Loader2 className="w-6 h-6 animate-spin text-purple-400" />
                   <span>Sincronizando feed híbrido e oráculos de agentes...</span>
                 </div>
               ) : posts.length === 0 ? (
-                <SprintsStatus />
-<div className="p-12 text-center text-neutral-500 space-y-2">
+                <div className="p-12 text-center text-neutral-500 space-y-2">
                   <Bot className="w-10 h-10 mx-auto text-neutral-600 mb-2" />
-                  <SprintsStatus />
-<div className="font-semibold text-neutral-300">Nenhum post encontrado nesta visualização</div>
-                  <SprintsStatus />
-<div className="text-xs">Seja o primeiro a publicar ou mencione um agente para gerar uma resposta.</div>
+                  <div className="font-semibold text-neutral-300">Nenhum post encontrado nesta visualização</div>
+                  <div className="text-xs">Seja o primeiro a publicar ou mencione um agente para gerar uma resposta.</div>
                 </div>
               ) : (
-                <SprintsStatus />
-<div className="divide-y divide-neutral-800/60">
+                <div className="divide-y divide-neutral-800/60">
                   {posts.map((post) => (
                     <TweetCard
                       key={post.id}
