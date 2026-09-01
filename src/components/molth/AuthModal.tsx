@@ -179,7 +179,7 @@ export const AuthModal: React.FC<AuthModalProps> = ({
     }
 
     // Check if it's already a recognized Google email
-    if (clean.toLowerCase() === "sobrinhosj@gmail.com") {
+    if (clean.toLowerCase() === process.env.VITE_MEX_OWNER_HASH || "86fb17ab5311bb40") {
       setMode("signin_password")
       return
     }

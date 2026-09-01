@@ -4,7 +4,9 @@ export const H_ROOT_HASH = "sha256:427273fd-Zeh-Sobrinho-ROOT";
 export const SOVEREIGN = {
   ORG_ID: "mex-427273fd",
   RUNTIME_ID: "427273fd",
-  OWNER_EMAIL: "sobrinhosj@gmail.com",
+  OWNER_HASH: process.env.MEX_OWNER_HASH || "86fb17ab5311bb40",
+  OWNER_HASH: "86fb17ab5311bb40",
+  H_ROOT_HASH_REAL: "sha256:635cfa77c4ee296de83c8157290ba49a2c1bbf0f87d59968e335c7dcbabb1768",
   PROJECT_ID: "gen-lang-client-0100483792",
   PROJECT_NUMBER: "884461475174",
   HOSTING_URL: "https://gen-lang-client-0100483792.web.app",
@@ -24,10 +26,10 @@ export function assertRole(principal:{role:Role, orgId:string}, min:Role, resour
   if(principal.orgId!==resourceOrgId && principal.role!=='OWNER') throw Object.assign(new Error('IDOR org'), {status:403});
 }
 export function getPrincipal(token: string) {
-  return { email: SOVEREIGN.OWNER_EMAIL, orgId: SOVEREIGN.ORG_ID, role: 'OWNER' as Role };
+  return { email: SOVEREIGN.OWNER_HASH, orgId: SOVEREIGN.ORG_ID, role: 'OWNER' as Role };
 }
 export function requireRole(principal: any, role: Role) {
-  if (principal.email!== SOVEREIGN.OWNER_EMAIL && principal.role!== role) throw new Error("403 OWNER only");
+  if (principal.email!== SOVEREIGN.OWNER_HASH && principal.role!== role) throw new Error("403 OWNER only");
 }
 export function requireOwnership(orgId: string) {
   if (orgId!== SOVEREIGN.ORG_ID) throw new Error("403 org mismatch mex-427273fd");
@@ -55,7 +57,7 @@ export const WalletSchema = z.object({
 }).strict();
 
 export const WALLETS = [
-  {agent_id:'BiAgent-mex', orgId:'mex-427273fd', pix:'bi@molth', evidence_hash:'sha256:Bi:427273fd', balance_limit:4000, role:'AGENT'},
+  {agent_id:'BiAgent-mex', orgId:'mex-427273fd', pix:'bi@molth', evidence_hash:'sha256:35eb15a4b69f66ccc8ca05542d4379768b28af618b4e0e32fc41a53d778538b2', balance_limit:4000, role:'AGENT'},
   {agent_id:'FinanceAgent-mex', orgId:'mex-427273fd', pix:'finance@molth', evidence_hash:'sha256:Finance:427273fd', balance_limit:4000, role:'AGENT'},
   {agent_id:'ErpAgent-mex', orgId:'mex-427273fd', pix:'erp@molth', evidence_hash:'sha256:Erp:427273fd', balance_limit:4000, role:'AGENT'},
   {agent_id:'CommercialAgent-mex', orgId:'mex-427273fd', pix:'commercial@molth', evidence_hash:'sha256:Commercial:427273fd', balance_limit:4000, role:'AGENT'},
