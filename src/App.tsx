@@ -1,3 +1,4 @@
+import YAIMoltH from "./components/yAI-MoltH"
 import SprintsStatus from "./components/SprintsStatus"
 import React, { useState, useEffect } from "react";
 import { FeedFilter, Post, UserAccount, DebateSession } from "./types";
@@ -268,7 +269,8 @@ export default function App() {
         />
 
         {/* Center Main Feed or Directory */}
-        <main className="flex-1 min-w-0 border-r border-neutral-800/80 min-h-screen">
+        <YAIMoltH />
+ <main className="flex-1 min-w-0 border-r border-neutral-800/80 min-h-screen">
         <SprintsStatus />
           {currentView === "feed" ? (
             <div>
