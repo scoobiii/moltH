@@ -1,0 +1,58 @@
+
+> react-example@0.0.0 test:sprint0
+> vitest run src/server/vortexContract.sprint0.test.ts
+
+
+[1m[30m[46m RUN [49m[39m[22m [36mv4.1.11 [39m[90m/root/moltH[39m
+
+ [32m✓[39m src/server/vortexContract.sprint0.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 33[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 16:15:22
+[2m   Duration [22m 8.90s[2m (transform 340ms, setup 0ms, import 432ms, tests 33ms, environment 7.24s)[22m
+
+=================================================
+🚀 Executando Bench Hard (5000 iterações)...
+=================================================
+========== BENCH HARD FINAL ==========
+{
+  "meta": {
+    "cases": 5000,
+    "ok": 5000,
+    "fail": 0,
+    "platform": "Linux arm64",
+    "node": "v24.18.1",
+    "loadavg": [
+      0.12,
+      0.07,
+      0.02
+    ]
+  },
+  "latency_ms": {
+    "p50": 0.0176,
+    "p95": 0.0597,
+    "p99": 0.2557,
+    "mean": 0.0319
+  },
+  "throughput": {
+    "wall_ms": 170.72,
+    "ops_per_sec": 29287
+  },
+  "memory": {
+    "rss_before_mb": 29.14,
+    "rss_after_mb": 36.55,
+    "delta_rss_mb": 7.41
+  },
+  "gate": {
+    "coverage": [
+      "valid_executed",
+      "invalid_no_hash",
+      "invalid_forged",
+      "invalid_false_success"
+    ],
+    "verdict": "PASS"
+  }
+}
+======================================
+

@@ -1,0 +1,25 @@
+{
+  "contract_version": "v0.1",
+  "invocation_id": "367e4f66-918d-481f-ad5e-a88f3973471b",
+  "runtime_id": "9a9be9f5d2d4a2bafa25926eb96ddf8d8af794ab9ef32cd59e5782771939f44e",
+  "env_tag": "node-linux-arm64-termux",
+  "agent": "selix-a23",
+  "status": "success",
+  "executed": true,
+  "output": {
+    "stdout": "\n> react-example@0.0.0 test:sprint0\n> vitest run src/server/vortexContract.sprint0.test.ts\n\n\n\u001b[1m\u001b[30m\u001b[46m RUN \u001b[49m\u001b[39m\u001b[22m \u001b[36mv4.1.11 \u001b[39m\u001b[90m/root/moltH\u001b[39m\n\n \u001b[32m✓\u001b[39m src/server/vortexContract.sprint0.test.ts \u001b[2m(\u001b[22m\u001b[2m6 tests\u001b[22m\u001b[2m)\u001b[22m\u001b[32m 33\u001b[2mms\u001b[22m\u001b[39m\n\n\u001b[2m Test Files \u001b[22m \u001b[1m\u001b[32m1 passed\u001b[39m\u001b[22m\u001b[90m (1)\u001b[39m\n\u001b[2m      Tests \u001b[22m \u001b[1m\u001b[32m6 passed\u001b[39m\u001b[22m\u001b[90m (6)\u001b[39m\n\u001b[2m   Start at \u001b[22m 16:15:22\n\u001b[2m   Duration \u001b[22m 8.90s\u001b[2m (transform 340ms, setup 0ms, import 432ms, tests 33ms, environment 7.24s)\u001b[22m\n\n=================================================\n🚀 Executando Bench Hard (5000 iterações)...\n=================================================\n========== BENCH HARD FINAL ==========\n{\n  \"meta\": {\n    \"cases\": 5000,\n    \"ok\": 5000,\n    \"fail\": 0,\n    \"platform\": \"Linux arm64\",\n    \"node\": \"v24.18.1\",\n    \"loadavg\": [\n      0.12,\n      0.07,\n      0.02\n    ]\n  },\n  \"latency_ms\": {\n    \"p50\": 0.0176,\n    \"p95\": 0.0597,\n    \"p99\": 0.2557,\n    \"mean\": 0.0319\n  },\n  \"throughput\": {\n    \"wall_ms\": 170.72,\n    \"ops_per_sec\": 29287\n  },\n  \"memory\": {\n    \"rss_before_mb\": 29.14,\n    \"rss_after_mb\": 36.55,\n    \"delta_rss_mb\": 7.41\n  },\n  \"gate\": {\n    \"coverage\": [\n      \"valid_executed\",\n      \"invalid_no_hash\",\n      \"invalid_forged\",\n      \"invalid_false_success\"\n    ],\n    \"verdict\": \"PASS\"\n  }\n}\n======================================\n\n",
+    "stderr": "",
+    "exit_code": 0
+  },
+  "duration_ms": 170.72,
+  "evidence_hash": "f19721e76d66c9a31238d6ca24e584ea235ec9f8ef64ad73931e8821a7c1ef51",
+  "truncated": false,
+  "meta": {
+    "file_hash": "120e931b9f36eab6c05e7f96759fbb4d19b84b1fdab79ceca19498ff00c1ea3f",
+    "bench": {
+      "ops_per_sec": 29287,
+      "p99_ms": 0.2557
+    },
+    "runtime_label": "a23-vintage-snapdragon-arm64"
+  }
+}
