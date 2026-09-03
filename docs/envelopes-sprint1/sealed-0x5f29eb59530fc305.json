@@ -1,0 +1,22 @@
+{
+  "valid": true,
+  "agent_id": "MoltH-Agent-13",
+  "runtime_id": "427273fd2bdb12e608222856fd248a4a07d25599a74a6fbe318908a14493f2da",
+  "evidenceHash": "0x5f29eb59530fc305",
+  "pre": {
+    "agentId": "MoltH-Agent-13",
+    "prompt": "agent 13 task",
+    "sha": "ab64ca9cc67af0b6"
+  },
+  "receipt": {
+    "toolName": "executeJavaScript",
+    "success": true,
+    "logs": [
+      "AGENT 13 VORTEX 1788408791796"
+    ],
+    "executionTimeMs": 98,
+    "evidenceHash": "0x5f29eb59530fc305"
+  },
+  "env_tag": "node-arm64-termux-resilient-vortex-gateway",
+  "timestamp": "2026-09-03T04:13:12.132Z"
+}

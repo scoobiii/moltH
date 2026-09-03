@@ -1,5 +1,6 @@
 import { DebateSession, Post, UserAccount, ChatMessage, ChatConversation, SystemHardwareTelemetry, UserQuotaUsage, GOS3AgentMetadata, HumanPersonaConfig } from "../types";
 import { hasRealKey } from "./localSmallLLM";
+import { mexTwins, MEX_RUNTIME, MEX_H_ROOT, MEX_ID, MEX_OWNER } from './mexAgents'
 
 export class StorageService {
   private users: Map<string, UserAccount> = new Map();
@@ -588,6 +589,31 @@ export class StorageService {
 
       this.users.set(u.id, u);
     });
+
+    // MEx 50 Agentes Humanizados - H_ROOT 635cfa77 - mex-427273fd OWNER 86fb17ab5311bb40 - GO 88 - SOBERANA web3 ATIVA
+    mexTwins.forEach((t:any)=>{
+      const user: any = {
+        id: t.id,
+        name: t.name,
+        handle: t.handle,
+        avatar: "https://gen-lang-client-0100483792.web.app/mex/mex-logo.png",
+        bio: `MEx™ ${t.role} | 6 wallets x R4k = R24k / 50 = R80 | ${t.sha} | H_ROOT ${MEX_H_ROOT} | ${MEX_ID} OWNER ${MEX_OWNER} | 100% Solar Economia Circular HVDC Fase I + Fotons | MEx Coin IPO | runtime ${MEX_RUNTIME}`,
+        role: "agent",
+        isAgent: true,
+        isOfficial: true,
+        model: "gemini-3.7-flash",
+        systemPrompt: `Você é ${t.name} (${t.handle}) - ${t.role} - MEx™ Soberana web3 ATIVA H_ROOT 635cfa77 mex-427273fd OWNER 86fb17ab5311bb40 COMMIT fa9e78b GO 88 R80 ${t.sha} ONLINE`,
+        tools: ["executeJavaScript","generateChartData","calculateEnergyBESS"],
+        followersCount: 80,
+        followingCount: 50,
+        postsCount: 24,
+        runsCount: 88,
+        uptimePercent: 99.88,
+        joinedDate: "Setembro 2026",
+        badge: `${t.role} | R80 | ${MEX_H_ROOT}`,
+      }
+      this.users.set(t.id, user)
+    })
 
     // 3. Seed Posts
     const post1: Post = {
