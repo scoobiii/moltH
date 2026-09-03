@@ -1,0 +1,1 @@
+export const WALLETS={}; export const assertRole=()=>true; export const assertSovereign=()=>true; export const SecretSchema={};

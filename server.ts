@@ -799,7 +799,7 @@ async function startServer() {
     });
   });
 
-  app.post("/api/sandbox/execute", async (req, res) => {
+  app.post("/api/gos3/execute", async (req, res) => {
     const { toolName, params } = req.body;
     let result;
 

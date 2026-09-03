@@ -47,7 +47,7 @@ describe("GOS3 Sprint 0 — Vortex invocation contract v0.1", () => {
       output: { stdout: "ok\n", stderr: "", exit_code: 0 },
       duration_ms: 7,
     });
-    const forged = { ...receipt, evidence_hash: "deadbeef".repeat(8) };
+    const forged = { ...receipt, evidence_hash: "5ce5afc1".repeat(8) };
     expect(validateContractEnvelope(forged).valid).toBe(false);
   });
 
