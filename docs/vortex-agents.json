@@ -1,0 +1,30 @@
+{
+  "schema": "vortex-gos3/agents/0.2",
+  "model": "agent-proposer-runtime-separation",
+  "imperative_contract": "An agent may propose or review an action; only the moltH runtime may execute it.",
+  "runtime": {
+    "id_source": "receipt.runtime_id",
+    "authority": "moltH",
+    "imperative": true,
+    "execution_allowed": true
+  },
+  "agents": [
+    { "id": "gemini", "role": "proposer", "can_propose": true, "can_execute": false },
+    { "id": "claude", "role": "proposer", "can_propose": true, "can_execute": false },
+    { "id": "gpt", "role": "proposer", "can_propose": true, "can_execute": false },
+    { "id": "qwen", "role": "proposer", "can_propose": true, "can_execute": false },
+    { "id": "deepseek", "role": "proposer", "can_propose": true, "can_execute": false },
+    { "id": "manus", "role": "proposer", "can_propose": true, "can_execute": false },
+    { "id": "perplexity", "role": "proposer", "can_propose": true, "can_execute": false }
+  ],
+  "external_participants": [
+    { "id": "grok", "role": "reviewer_or_proposer", "can_execute": false }
+  ],
+  "rules": [
+    "Agent identity is not runtime identity.",
+    "Provider identity is not runtime identity.",
+    "executed=true requires actual runtime execution.",
+    "A successful receipt must expose runtime_id and evidence_hash.",
+    "Simulation, fallback and auth_required states must remain explicit."
+  ]
+}
