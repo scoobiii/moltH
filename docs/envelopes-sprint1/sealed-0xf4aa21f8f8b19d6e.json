@@ -1,0 +1,8 @@
+{
+  "valid": true,
+  "agent_id": "MESH-0xf4aa21f8f8b19d6e",
+  "evidenceHash": "0xf4aa21f8f8b19d6e",
+  "runtime_id": "427273fd2bdb12e608222856fd248a4a07d25599a74a6fbe318908a14493f2da",
+  "env_tag": "node-arm64-termux-resilient-vortex-gateway",
+  "timestamp": "2026-09-03T04:10:57.056220Z"
+}
