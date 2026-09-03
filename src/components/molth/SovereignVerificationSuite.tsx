@@ -28,7 +28,7 @@ export function SovereignVerificationSuite({ agents }: { agents: BusinessAgentIt
     const t0 = performance.now()
     const envTag = getRealClientEnvTag()
     try {
-      const res = await fetch('/api/gos3/execute', {
+      const res = await fetch('/api/vortex/call', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
