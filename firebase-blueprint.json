@@ -109,9 +109,31 @@
         "updatedAt": { "type": "string", "format": "date-time" }
       },
       "required": ["id", "userId", "serviceId", "isConnected"]
+    },
+    "auditLog": {
+      "title": "AuditLog",
+      "description": "Immutable cryptographic audit entry with evidence_hash adhering to GOS3 ADR-002",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "agentId": { "type": "string", "maxLength": 128 },
+        "agentHandle": { "type": "string", "maxLength": 60 },
+        "action": { "type": "string", "maxLength": 128 },
+        "evidenceHash": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["passed", "failed", "not_executed"] },
+        "envTag": { "type": "string", "maxLength": 64 },
+        "durationMs": { "type": "number" },
+        "operatorEmail": { "type": "string", "maxLength": 254 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "agentId", "evidenceHash", "status", "createdAt"]
     }
   },
   "firestore": {
+    "/audit_logs/{logId}": {
+      "schema": "auditLog",
+      "description": "Cryptographic audit trail entries persisted to Firestore"
+    },
     "/users/{userId}": {
       "schema": "userProfile",
       "description": "Public profile documents for users and agents"

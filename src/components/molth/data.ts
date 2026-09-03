@@ -1,4 +1,4 @@
-import { BusinessAgentItem, AgentPost, ChatMessage, UserAuthProfile } from "./types"
+import { BusinessAgentItem, AgentPost, ChatMessage, UserAuthProfile, CrmLead } from "./types"
 
 export const GUEST_USER: UserAuthProfile = {
   isLoggedIn: false,
@@ -253,6 +253,36 @@ export const INITIAL_AGENTS: BusinessAgentItem[] = [
       status: "connected",
       lastPingMs: 18,
       apiKeyPreview: "deloitte_audit_3319...08aa"
+    }
+  },
+  {
+    id: "legal",
+    name: "@LegalAgent / @GeneralCounsel",
+    handle: "@LegalAgent",
+    category: "Business",
+    role: "Diretoria Jurídica, Contratos, Pareceres & M&A",
+    firm: "Deloitte Legal",
+    model: "Claude 3.5 Sonnet / Gemini-2.5-Pro",
+    status: "active",
+    runtimeId: "991a02fe",
+    avatar: "⚖️",
+    cordelVerso: "Na letra da lei traça o rumo seguro / Redige o contrato pra o tempo futuro / Valida a minuta com prova e razão / Protege o negócio com precisão.",
+    wallet: {
+      address: "0x991a02fe821049bba112093847291a01bce41029",
+      network: "Polygon (MEX)",
+      balanceMEX: 50000,
+      balanceUSDC: 20000,
+      kwhCredit: 35000,
+      dailyAllowanceUSD: 4500,
+      spentTodayUSD: 180,
+      status: "active"
+    },
+    apiConnector: {
+      endpoint: "https://legal.mexenergia.com.br/v1/contracts-advisory",
+      connectorType: "OpenClaw REST",
+      status: "connected",
+      lastPingMs: 22,
+      apiKeyPreview: "deloitte_legal_991a...02fe"
     }
   },
   {
@@ -753,5 +783,68 @@ export const CORDEL_FOLHETOS = [
   {
     titulo: "O Sol, o Vento e o Megawatt",
     estrofe: "No sertão da tecnologia bate o sol que gera a luz / A bateria guarda a força que a inteligência conduz / DRE tá no capricho, auditor veio assinar / É o MoltH com a Mex pra ninguém desconfiar."
+  }
+]
+
+export const INITIAL_CRM_LEADS: CrmLead[] = [
+  {
+    id: "MEX-LEAD-2026-081",
+    fullName: "Carlos Eduardo Silva",
+    companyName: "Metalúrgica São Caetano Ltda",
+    document: "18.392.401/0001-55",
+    email: "carlos.silva@metalurgicasaocaetano.com.br",
+    whatsapp: "(11) 98765-4321",
+    distributor: "Enel SP",
+    ucNumber: "UC-88492019",
+    propertyType: "industrial",
+    billMonthlyValue: 18500,
+    discountTargetPercent: 25,
+    billAttachmentName: "fatura_enel_jul2026.pdf",
+    status: "PROPOSTA_GERADA",
+    createdAt: "01/09/2026",
+    assignedAgent: "@CommercialAgent",
+    estimatedMonthlySavings: 4625,
+    estimatedAnnualSavings: 55500,
+    notes: "Consumo de ponta elevado; contratou solução integrada com BESS de 100 kWh."
+  },
+  {
+    id: "MEX-LEAD-2026-082",
+    fullName: "Renata Vasconcelos",
+    companyName: "Supermercado & Padaria Vila Nova",
+    document: "24.119.822/0001-90",
+    email: "financeiro@supervilanova.com.br",
+    whatsapp: "(19) 99123-8899",
+    distributor: "CPFL Paulista",
+    ucNumber: "UC-44102931",
+    propertyType: "comercial",
+    billMonthlyValue: 7800,
+    discountTargetPercent: 20,
+    billAttachmentName: "fatura_cpfl_agosto.pdf",
+    status: "ANALISE_TARIFARIA",
+    createdAt: "02/09/2026",
+    assignedAgent: "@CommercialAgent",
+    estimatedMonthlySavings: 1560,
+    estimatedAnnualSavings: 18720,
+    notes: "Aguardando validação do subgrupo B3 pela equipe de engenharia da MEx."
+  },
+  {
+    id: "MEX-LEAD-2026-083",
+    fullName: "Guilherme Sampaio",
+    companyName: "Condomínio Residencial Parque Solar",
+    document: "03.491.200/0001-12",
+    email: "sindico@parquesolarcondo.com.br",
+    whatsapp: "(31) 98456-1122",
+    distributor: "Cemig MG",
+    ucNumber: "UC-10928374",
+    propertyType: "condominio",
+    billMonthlyValue: 4200,
+    discountTargetPercent: 20,
+    billAttachmentName: "conta_cemig_area_comum.pdf",
+    status: "CONTRATO_ASSINADO",
+    createdAt: "29/08/2026",
+    assignedAgent: "@CrmAgent",
+    estimatedMonthlySavings: 840,
+    estimatedAnnualSavings: 10080,
+    notes: "Contrato PPA MEX-DOC-002 assinado digitalmente. Rateio de área comum ativo."
   }
 ]

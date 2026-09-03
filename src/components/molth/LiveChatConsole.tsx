@@ -29,6 +29,8 @@ interface LiveChatConsoleProps {
   onSelectTarget: (handle: string) => void
   onClearChat: () => void
   showToast: (msg: string) => void
+  onOpenCrmOnboarding?: () => void
+  onViewCrmPipeline?: () => void
 }
 
 export const LiveChatConsole: React.FC<LiveChatConsoleProps> = ({
@@ -37,7 +39,9 @@ export const LiveChatConsole: React.FC<LiveChatConsoleProps> = ({
   selectedTarget,
   onSelectTarget,
   onClearChat,
-  showToast
+  showToast,
+  onOpenCrmOnboarding,
+  onViewCrmPipeline
 }) => {
   const [expandedProofId, setExpandedProofId] = useState<string | null>(null)
   const [autoExpandAll, setAutoExpandAll] = useState<boolean>(true)

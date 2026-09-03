@@ -78,3 +78,26 @@ export interface UserAuthProfile {
   walletAddress: string
   mexBalance: number
 }
+
+export type LeadStatus = "NOVO_LEAD" | "ANALISE_TARIFARIA" | "PROPOSTA_GERADA" | "CONTRATO_ASSINADO"
+
+export interface CrmLead {
+  id: string
+  fullName: string
+  companyName: string
+  document: string // CNPJ / CPF
+  email: string
+  whatsapp: string
+  distributor: string // Enel, Cemig, CPFL, Light, Neoenergia, etc.
+  ucNumber?: string // Unidade Consumidora
+  propertyType: "comercial" | "industrial" | "residencial" | "fazenda" | "condominio"
+  billMonthlyValue: number
+  discountTargetPercent: number // 15, 20, 25
+  billAttachmentName?: string
+  status: LeadStatus
+  createdAt: string
+  assignedAgent: string // @CommercialAgent / @CrmAgent
+  estimatedMonthlySavings: number
+  estimatedAnnualSavings: number
+  notes?: string
+}

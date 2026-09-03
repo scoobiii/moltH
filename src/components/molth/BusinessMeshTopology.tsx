@@ -1,18 +1,33 @@
 import React from "react"
 import { BusinessAgentItem } from "./types"
+import { INITIAL_AGENTS } from "./data"
 import { Cpu, ChevronRight, Zap, ShieldCheck } from "lucide-react"
 
 interface BusinessMeshTopologyProps {
-  agents: BusinessAgentItem[]
-  onSelectAgent: (handle: string) => void
-  getFirmBadgeColor: (firm: string) => string
+  agents?: BusinessAgentItem[]
+  onSelectAgent?: (handle: string) => void
+  getFirmBadgeColor?: (firm: string) => string
+  onOpenTestSuite?: () => void
+}
+
+const defaultFirmBadgeColor = (firm: string) => {
+  switch (firm) {
+    case "Deloitte": return "bg-emerald-950/70 text-emerald-300 border-emerald-800/60"
+    case "EY": return "bg-amber-950/70 text-amber-300 border-amber-800/60"
+    case "PwC": return "bg-sky-950/70 text-sky-300 border-sky-800/60"
+    case "KPMG": return "bg-purple-950/70 text-purple-300 border-purple-800/60"
+    default: return "bg-rose-950/70 text-rose-300 border-rose-800/60"
+  }
 }
 
 export const BusinessMeshTopology: React.FC<BusinessMeshTopologyProps> = ({
-  agents,
-  onSelectAgent,
-  getFirmBadgeColor
+  agents = INITIAL_AGENTS,
+  onSelectAgent = (_handle: string) => {},
+  getFirmBadgeColor = defaultFirmBadgeColor,
+  onOpenTestSuite
 }) => {
+  const safeAgents = agents && Array.isArray(agents) && agents.length > 0 ? agents : INITIAL_AGENTS
+
   return (
     <div className="px-4 pt-3 max-w-4xl mx-auto w-full space-y-5 text-[#f2e6e4] pb-24">
       
@@ -28,6 +43,15 @@ export const BusinessMeshTopology: React.FC<BusinessMeshTopologyProps> = ({
           </p>
         </div>
         <div className="flex items-center gap-2">
+          {onOpenTestSuite && (
+            <button
+              onClick={onOpenTestSuite}
+              className="text-xs px-3 py-1 rounded-lg bg-emerald-950/80 text-emerald-300 border border-emerald-700/60 hover:bg-emerald-900 font-semibold transition-all flex items-center gap-1.5"
+            >
+              <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Rodar Testes Soberanos</span>
+            </button>
+          )}
           <span className="text-xs px-2.5 py-1 rounded-lg bg-[#241718] text-[#ffb4a8] border border-[#4a2e2b] font-mono">
             Isolamento: Nx1 Strict
           </span>
@@ -61,7 +85,7 @@ export const BusinessMeshTopology: React.FC<BusinessMeshTopologyProps> = ({
 
       {/* Grid of 20 Agents */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-        {agents.map(ag => (
+        {safeAgents.map(ag => (
           <div
             key={ag.id}
             onClick={() => onSelectAgent(ag.handle)}

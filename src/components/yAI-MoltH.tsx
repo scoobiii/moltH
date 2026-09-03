@@ -12,7 +12,7 @@ import {
   INITIAL_MESSAGES, 
   INITIAL_POSTS 
 } from "./molth/data"
-import { CordelLanding } from "./molth/CordelLanding"
+import { MoltHLanding } from "./molth/MoltHLanding"
 import { LiveChatConsole } from "./molth/LiveChatConsole"
 import { CryptoAndConnectors } from "./molth/CryptoAndConnectors"
 import { ResearchFeed } from "./molth/ResearchFeed"
@@ -516,20 +516,7 @@ export default function YAIMoltH() {
 
         {/* View Routing */}
         {activeNav === "landing" && (
-          <CordelLanding
-            agents={agents}
-            chatInput={chatInput}
-            onChatInputChange={handleInputChangeWithAutocomplete}
-            onLaunchConsole={(agentHandle) => {
-              if (agentHandle) {
-                setSelectedAgentTarget(agentHandle)
-                setChatInput(`${agentHandle} `)
-              }
-              setActiveNav("chat")
-            }}
-            onNavigate={setActiveNav}
-            getFirmBadgeColor={getFirmBadgeColor}
-          />
+          <MoltHLanding />
         )}
 
         {activeNav === "chat" && (

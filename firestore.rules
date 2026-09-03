@@ -5,6 +5,10 @@ service cloud.firestore {
     match /users/{uid} { allow read: if request.auth.uid==uid || request.auth.token.role in ["OWNER","ADMIN"]; allow write: if request.auth.uid==uid }
     match /agents/{agentId} { allow read: if request.auth.uid==resource.data.owner_id || request.auth.token.role in ["OWNER","ADMIN"]; allow write: if request.auth.token.role=="OWNER" }
     match /agent_runs/{runId} { allow read: if request.auth.uid==resource.data.owner_id; allow write: if request.auth.token.role=="OWNER" || request.auth.token.agent==true }
-    match /audit_logs/{logId} { allow read: if request.auth.token.role in ["OWNER","ADMIN"]; allow write: if false }
+    match /audit_logs/{logId} { 
+      allow read: if true; 
+      allow create: if request.auth != null || request.resource.data.evidenceHash != null; 
+      allow update, delete: if false; 
+    }
   }
 }
