@@ -1,0 +1,13 @@
+{
+  "valid": true,
+  "agent_id": "GOS3-Auditor",
+  "runtime_id": "427273fd2bdb12e608222856fd248a4a07d25599a74a6fbe318908a14493f2da",
+  "evidence_hash": "0xc32f7b339a44d4d4",
+  "evidenceHash": "0xc32f7b339a44d4d4",
+  "env_tag": "node-arm64-termux-resilient",
+  "logs": [
+    "GOS3 FINAL BUILD 427273fd REAL"
+  ],
+  "timestamp": "2026-09-03T03:54:41.853258Z",
+  "immutable": true
+}
