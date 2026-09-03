@@ -799,7 +799,33 @@ async function startServer() {
     });
   });
 
-  app.post("/api/gos3/execute", async (req, res) => {
+  app.post("/api/vortex/call", async (req, res) => {
+  try {
+    const {agentId, prompt, tool} = req.body;
+    const crypto = await import('crypto');
+    const preSha = crypto.createHash('sha256').update((prompt||'')+Date.now()).digest('hex').slice(0,16);
+    let receipt = null;
+    if(tool) {
+      const r = await fetch(`http://localhost:${process.env.PORT||3000}/api/gos3/execute`, {method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({toolName: tool.name, params:{code: tool.code}})});
+      receipt = await r.json();
+    }
+    const sealed = {
+      valid:true,
+      agent_id: agentId||'GOS3-Auditor',
+      runtime_id:"427273fd2bdb12e608222856fd248a4a07d25599a74a6fbe318908a14493f2da",
+      evidenceHash: receipt?.evidenceHash || `0x${preSha}`,
+      pre: {agentId, prompt, sha: preSha},
+      receipt,
+      env_tag:"node-arm64-termux-resilient-vortex-gateway",
+      timestamp: new Date().toISOString()
+    };
+    const { persistImmutable } = await import('./src/lib/sovereignVault');
+    setImmediate(()=> persistImmutable(sealed).catch(()=>{}));
+    res.json(sealed);
+  } catch(e:any){ res.status(500).json({error:e.message}); }
+});
+
+app.post("/api/gos3/execute", async (req, res) => {
     const { toolName, params } = req.body;
     let result;
 

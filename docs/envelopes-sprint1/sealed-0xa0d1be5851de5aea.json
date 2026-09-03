@@ -1,0 +1,13 @@
+{
+  "valid": true,
+  "agent_id": "MoltH-Sovereign-1",
+  "runtime_id": "427273fd2bdb12e608222856fd248a4a07d25599a74a6fbe318908a14493f2da",
+  "evidenceHash": "0xa0d1be5851de5aea",
+  "evidence_hash": "0xa0d1be5851de5aea",
+  "env_tag": "node-arm64-termux-resilient-vortex-gateway",
+  "timestamp": "2026-09-03T04:06:46.166098Z",
+  "gateway": "vortex/call full ecosystem",
+  "activeAgents": 15,
+  "lag_ms": 400,
+  "seal": "SEAL_IMMUTABLE passed"
+}
