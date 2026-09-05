@@ -1,0 +1,74 @@
+name: GOS3 Reality Gate
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: reality-gate-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  reality:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout exact revision
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Run executable reality gate
+        id: gate
+        continue-on-error: true
+        run: node scripts/reality-gate.mjs
+
+      - name: Publish report as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: reality-${{ github.sha }}
+          path: docs/reality/reality-score.json
+          if-no-files-found: error
+
+      - name: Publish report back to branch
+        if: github.event_name == 'push' && github.ref != 'refs/heads/main'
+        run: |
+          if git diff --quiet -- docs/reality/reality-score.json; then
+            echo "No reality report changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/reality/reality-score.json
+          git commit -m "ci(reality): publish score [skip ci]"
+          git push
+
+      - name: Publish report to main
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        run: |
+          if git diff --quiet -- docs/reality/reality-score.json; then
+            echo "No reality report changes."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add docs/reality/reality-score.json
+          git commit -m "ci(reality): publish score [skip ci]"
+          git push
+
+      - name: Fail gate on failed evidence checks
+        if: steps.gate.outcome == 'failure'
+        run: exit 1
