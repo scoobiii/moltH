@@ -7,6 +7,11 @@ export default defineConfig({
     environment: "jsdom",
     globals: true,
     include: ["tests/**/*.test.ts", "tests/**/*.test.tsx", "src/**/*.test.{ts,tsx}"],
+    exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "tests/gos3_full_coverage.test.ts", // Executed deterministically by direct tsx runner
+    ],
   },
   resolve: {
     alias: {

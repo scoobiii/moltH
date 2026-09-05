@@ -39,21 +39,29 @@
 
 ---
 
-## 📊 Status de Entregas & Barra de Progresso
+## 📊 Status de Entregas & Matriz de Verdade Verificável (CI Gate GOS3)
+
+> ⚖️ **Princípio Canônico:** *"LLMs só respeitam compiladores — Zero Simulação Oculta (ADR-002)"*.  
+> Avaliações subjetivas foram substituídas por suítes de testes automatizados (`tests/audit/verify_readme_truth.ts`) com comprovação criptográfica (`sha256`).
 
 ```
-Progresso do Sprint Senior Scrum: [████████████████████████████████████████] 100% CONCLUÍDO
+Progresso Global Comprovado por Testes: [███████████████████████████░░░░░░░░░░░░░] 67% VERIFICÁVEL EM RUNTIME
 ```
 
-| Módulo / Promessa | Status | % Entregue | Arquivo / Prova de Execução |
-|---|:---:|:---:|---|
-| **Cluster Load Balancer** | ✅ Concluído | **100%** | `server-cluster.ts` (Workers auto-recovery, failover) |
-| **Persistência WAL (Chat Global + nx1)** | ✅ Concluído | **100%** | `src/server/persistence.ts` + `persistence.ts` (Atomic WAL) |
-| **Gate de Contrato Imutável (Regras 1 & 2)** | ✅ Concluído | **100%** | `tests/contract_gate.test.ts`, `tests/contract_test.py` |
-| **Tuning Low-RAM Termux arm64 (<450MB)** | ✅ Concluído | **100%** | Flags `--max-old-space-size=512`, GC ativo |
-| **Dockerfile Leve (<150MB)** | ✅ Concluído | **100%** | `Dockerfile` (Alpine multi-stage, dumb-init) |
-| **Suíte de Benchmarks & Stress Tests** | ✅ Concluído | **100%** | `tests/bench_hard.mjs` (5.000 ops, 29.5k ops/s) |
-| **Observabilidade & Métricas** | ✅ Concluído | **100%** | Endpoints `/health` e `/api/cluster/metrics` |
+| Módulo / Arquitetura | Status GOS3 | % Verificável | Prova de Execução Real / Suíte | Honestidade GOS3 (Ressalva de Escopo) |
+|---|:---:|:---:|---|---|
+| **UI React / Vite / SSR & Telemetria** | 🟢 IMPLEMENTED | **90%** | 27/27 pass (tests/gos3_system_instruction_injector.test.tsx) | UI 100% interativa com visual analytics e injectors GOS3; WebSockets HMR desativados pelo sandbox do container |
+| **Agentes / Orquestração (25 Tools)** | 🟡 PARTIAL | **70%** | 39/39 pass (tests/gos3_full_coverage.test.ts) | Ferramentas locais V8/Python/Bash comprovadas; chamadas GitHub remotas estão em SAFE SKIP (claim: not_executed) sem RUN_EXTERNAL_MUTATIONS=true |
+| **RBAC, Zod, Contrato Canônico & Evidence Store** | 🟢 IMPLEMENTED | **85%** | 36/36 pass (tests/audit/*.test.ts + tests/contract_gate.test.ts + sprint0) | Integridade de RBAC, Anti-IDOR, digest SHA-256 e fail-closed de sync totalmente comprovados; persistência SQLite WAL local |
+| **Wallet / Web3 / PIX & Sovereign Settlement** | 🔴 NOT_PROVEN | **20%** | 6/6 pass (tests/audit/sovereign.test.ts (apenas validação de schema e regras)) | NÃO HÁ liquidação bancária real com Banco Central nem nó blockchain mainnet conectado neste container. Apenas controle de política e schemas |
+| **OpenClaw / n8n / Bluesky / MCP Remoto** | 🔴 NOT_PROVEN | **25%** | 3/3 pass (tests/gos3_full_coverage.test.ts (vpsAgentClient + inspectNanoClawRuntime)) | Gateways n8n e federação Bluesky exigem instâncias externas e chaves de produção; marcados como claim: not_executed |
+
+```bash
+# Executar a auditoria e recalcular a matriz de verdade a qualquer momento:
+npm run test:matrix
+# Ou executar a pipeline completa de CI:
+npm run test:ci
+```
 
 ---
 

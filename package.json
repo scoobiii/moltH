@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "tsx server.ts",
+    "bootstrap": "tsx scripts/bootstrap_env.ts",
     "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
     "start": "node dist/server.cjs",
     "preview": "vite preview",
@@ -12,6 +13,8 @@
     "test": "vitest run && tsx tests/gos3_full_coverage.test.ts",
     "test:vitest": "vitest run",
     "test:sprint0": "vitest run src/server/vortexContract.sprint0.test.ts",
+    "test:ci": "vitest run && tsx tests/gos3_full_coverage.test.ts && node tests/bench_hard.mjs && node tests/stress_degrade.mjs && tsx tests/audit/verify_readme_truth.ts",
+    "test:matrix": "tsx tests/audit/verify_readme_truth.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {

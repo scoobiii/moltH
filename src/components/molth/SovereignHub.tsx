@@ -22,10 +22,12 @@ import { DevOpsView } from "./DevOpsView"
 import { OwnerView } from "./OwnerView"
 import { InvestorView } from "./InvestorView"
 import { SovereignVerificationSuite } from "./SovereignVerificationSuite"
+import { DynamicReadmeDocs } from "./DynamicReadmeDocs"
 import { AuthModal } from "./AuthModal"
 import { MExLanding } from "./MExLanding"
 import { AgentAutocomplete } from "./AgentAutocomplete"
 import { auth, onAuthStateChanged, logoutUser } from "../../services/firebase"
+import { detectClientDevice, ClientDeviceInfo } from "../../lib/deviceEnvironment"
 
 import {
   Crown,
@@ -49,7 +51,8 @@ import {
   X,
   ChevronRight,
   ShieldCheck,
-  CheckCircle2
+  CheckCircle2,
+  FileText
 } from "lucide-react"
 
 const STORAGE_KEY = "molth_gos3_sovereign_hub_v1"
@@ -97,7 +100,7 @@ export default function SovereignHub() {
   // Role Perspective & Navigation State
   const [activeRole, setActiveRole] = useState<StakeholderRole>("owner")
   const [activeNav, setActiveNav] = useState<
-    "chat" | "mesh" | "feed" | "crypto" | "pricing" | "devops" | "owner" | "investor" | "landing" | "tests" | "mexlanding"
+    "chat" | "mesh" | "feed" | "crypto" | "pricing" | "devops" | "owner" | "investor" | "landing" | "tests" | "mexlanding" | "readme"
   >("owner")
 
   // Modals & UI Toggles
@@ -109,6 +112,26 @@ export default function SovereignHub() {
   const [chatInput, setChatInput] = useState("")
   const [selectedAgentTarget, setSelectedAgentTarget] = useState<string>("@AllMesh")
   const [autocompleteQuery, setAutocompleteQuery] = useState<string | null>(null)
+
+  // Real Environment State (Host & Client)
+  const [clientEnv, setClientEnv] = useState<ClientDeviceInfo>(() => detectClientDevice())
+  const [hostEnvCategory, setHostEnvCategory] = useState<string>("VM")
+
+  // Bootstrap host environment probe
+  useEffect(() => {
+    fetch("/api/bootstrap/environment")
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.probe) {
+          setHostEnvCategory(data.probe.category.toUpperCase())
+        }
+      })
+      .catch(() => {})
+
+    const handleResize = () => setClientEnv(detectClientDevice())
+    window.addEventListener("resize", handleResize)
+    return () => window.removeEventListener("resize", handleResize)
+  }, [])
 
   // Listen to Firebase Auth real state changes
   useEffect(() => {
@@ -357,6 +380,34 @@ export default function SovereignHub() {
               <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
               <span>H ROOT 427273fd</span>
             </div>
+
+            <button
+              onClick={() => setActiveNav("devops")}
+              className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full border text-[10px] font-mono transition-all ${
+                currentUser.isLoggedIn
+                  ? "bg-zinc-900/90 border-emerald-800/80 hover:border-emerald-600 text-zinc-300"
+                  : "bg-zinc-900/90 border-zinc-800 hover:border-zinc-700 text-zinc-400"
+              }`}
+              title={
+                currentUser.isLoggedIn
+                  ? `Sessão Conectada: ${currentUser.name || currentUser.email} (${clientEnv.category.toUpperCase()}) • Clique para DevOps SRE`
+                  : `Desconectado (Visitante) • Dispositivo: ${clientEnv.category.toUpperCase()} • Clique para DevOps SRE ou faça login para conectar.`
+              }
+            >
+              <span className="text-sky-400">Host: {hostEnvCategory}</span>
+              <span className="text-zinc-600">•</span>
+              {currentUser.isLoggedIn ? (
+                <span className="text-emerald-400 font-bold flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  {clientEnv.category.toUpperCase()} (CONECTADO)
+                </span>
+              ) : (
+                <span className="text-zinc-400 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  DESCONECTADO ({clientEnv.category.toUpperCase()})
+                </span>
+              )}
+            </button>
           </div>
 
           {/* 6 Role Buttons */}
@@ -563,6 +614,16 @@ export default function SovereignHub() {
             </button>
 
             <button
+              onClick={() => setActiveNav("readme")}
+              className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
+                activeNav === "readme" ? "bg-emerald-950/80 text-emerald-300 border border-emerald-500/50" : "text-zinc-400 hover:text-white"
+              }`}
+            >
+              <FileText className="w-3.5 h-3.5 text-emerald-400" />
+              <span>README Docs (AJAX)</span>
+            </button>
+
+            <button
               onClick={() => setActiveNav("mexlanding")}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all flex items-center gap-1.5 ${
                 activeNav === "mexlanding" ? "bg-emerald-500 text-zinc-950 font-bold shadow-md shadow-emerald-500/20" : "text-emerald-400 hover:text-emerald-300 border border-emerald-500/30"
@@ -587,6 +648,13 @@ export default function SovereignHub() {
           <SovereignVerificationSuite
             agents={agents}
             showToast={showToast}
+            onOpenReadmeDocs={() => setActiveNav("readme")}
+          />
+        )}
+
+        {activeNav === "readme" && (
+          <DynamicReadmeDocs
+            showToast={showToast}
           />
         )}
 
@@ -595,7 +663,11 @@ export default function SovereignHub() {
         )}
 
         {activeNav === "devops" && (
-          <DevOpsView showToast={showToast} />
+          <DevOpsView
+            showToast={showToast}
+            currentUser={currentUser}
+            onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          />
         )}
 
         {activeNav === "investor" && (

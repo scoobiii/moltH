@@ -15,7 +15,7 @@ export function MoltHLanding(){
         </div>
         <div className="border border-zinc-800 p-6 rounded-xl">
           <h2 className="font-bold">Incaível</h2>
-          <p className="text-sm text-zinc-400 mt-2">proot Alpine • .env.age age1arc7u2 • firestore.rules RBAC • evidence_hash sha256:</p>
+          <p className="text-sm text-zinc-400 mt-2">Cloud Run VM / Termux • .env.age age1arc7u2 • firestore.rules RBAC • evidence_hash sha256:</p>
         </div>
       </div>
     </div>

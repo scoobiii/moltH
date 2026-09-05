@@ -19,5 +19,12 @@ export default defineConfig({
     }
   ],
   resolve: { alias: { "@": path.resolve(__dirname, "./src") } },
-  server: { host: true, port: 3000, watch: { ignored: ["**/.data/**","**/*.tmp"] } }
+  server: { host: true, port: 3000, watch: { ignored: ["**/.data/**","**/*.tmp"] } },
+  test: {
+    exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "tests/gos3_full_coverage.test.ts", // Executed deterministically by direct tsx runner
+    ],
+  },
 })

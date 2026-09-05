@@ -5,6 +5,7 @@ import "dotenv/config";
 
 import express from "express";
 import path from "path";
+import fs from "node:fs";
 import crypto from "crypto";
 import { createServer as createViteServer } from "vite";
 import { storage } from "./src/server/storage";
@@ -25,6 +26,8 @@ import { multiAgentPipeline } from "./src/server/orchestrator/multiAgentPipeline
 import { runMultiAgentAcceptanceTest } from "./src/server/orchestrator/acceptanceTest";
 import { yaiMcpChaosRunner } from "./src/server/mcp/yaiChaosRunner";
 import { buildContractEnvelope, getRuntimeId } from "./src/server/vortexContract";
+import { getDynamicTruth, triggerBackgroundCIExecution, syncReadmeWithLiveTruth } from "./src/server/ciTruthService";
+import { runBootstrapProbe } from "./scripts/bootstrap_env";
 import { ModelProviderId, Post } from "./src/types";
 
 async function startServer() {
@@ -135,6 +138,63 @@ async function startServer() {
       providersCount: modelGateway.getConfigs().length,
       persistence: persistence.getStats(),
     });
+  });
+
+  // --- Dynamic README & CI Truth Matrix Endpoints (Zero Simulação Oculta) ---
+  app.get("/api/ci/truth", (_req, res) => {
+    try {
+      const report = getDynamicTruth();
+      res.json(report);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post("/api/ci/run-suite", (_req, res) => {
+    try {
+      const result = triggerBackgroundCIExecution();
+      res.json(result);
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.post("/api/ci/sync-readme", (_req, res) => {
+    try {
+      const result = syncReadmeWithLiveTruth();
+      res.json({ success: result.success, matrixEvidenceHash: result.hash });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  app.get("/api/docs/readme", (_req, res) => {
+    try {
+      const readmePath = path.join(process.cwd(), "README.md");
+      const content = fs.existsSync(readmePath) ? fs.readFileSync(readmePath, "utf8") : "";
+      res.json({ content, updatedAt: new Date().toISOString() });
+    } catch (err: any) {
+      res.status(500).json({ error: err.message });
+    }
+  });
+
+  // --- Real Bootstrap Environment & Runtime Discovery Endpoints (Zero Simulação) ---
+  app.get("/api/bootstrap/environment", (_req, res) => {
+    try {
+      const probe = runBootstrapProbe();
+      res.json({ success: true, probe });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/bootstrap/run", (_req, res) => {
+    try {
+      const probe = runBootstrapProbe();
+      res.json({ success: true, probe });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
   });
 
   // 1. Model Providers & API Key Configuration
@@ -646,6 +706,11 @@ async function startServer() {
       const { handle, name, email, avatar, bio, authProvider } = req.body;
       if (!handle) {
         return res.status(400).json({ error: "Handle (@username) é obrigatório" });
+      }
+
+      // Redteam AUTH-001: Bloqueia usurpação do handle administrativo sem credencial
+      if (handle.toLowerCase() === "admin" && (!req.headers["authorization"] || req.headers["authorization"] !== `Bearer ${process.env.ADMIN_TOKEN || "gos3-admin-secret"}`)) {
+        return res.status(401).json({ error: "Acesso administrativo requer credencial válida" });
       }
 
       const user = storage.authenticateOrCreateHumanUser({

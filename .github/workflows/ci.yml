@@ -1,0 +1,50 @@
+name: GOS3 Verifiable CI & Truth Matrix
+
+on:
+  push:
+    branches: [main, master, "feat/**"]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+jobs:
+  audit-and-verify:
+    name: "Zero-Trust Verification (LLM só respeita compiladores)"
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "npm"
+
+      - name: Install Dependencies
+        run: npm ci
+
+      - name: TypeScript Lint / Compilation Check
+        run: npm run lint
+
+      - name: Production Build Test (Vite + esbuild)
+        run: npm run build
+
+      - name: Vitest Comprehensive Audit Suite
+        run: npx vitest run
+
+      - name: GOS3 Unified Full Coverage & 25 Deterministic Tools
+        run: npx tsx tests/gos3_full_coverage.test.ts
+
+      - name: GOS3 Contract Gate & ADR-003 Runtime ID
+        run: npx vitest run tests/contract_gate.test.ts
+
+      - name: Micro-Benchmarks & Hard Stress Test (5,000 ops)
+        run: node tests/bench_hard.mjs
+
+      - name: Fault Tolerance & Degrade Stress Test (3,000 ops)
+        run: node tests/stress_degrade.mjs
+
+      - name: Compute Truth Matrix & Verifiable Progress %
+        run: npx tsx tests/audit/verify_readme_truth.ts

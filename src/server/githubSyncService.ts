@@ -3,6 +3,12 @@ import path from "node:path";
 import crypto from "node:crypto";
 import { storage } from "./storage";
 import { vectorMemory } from "./vectorMemory";
+import {
+  evidenceStore,
+  PersistenceReceipt,
+  GitHubWriteAttestation,
+  EvidenceStore,
+} from "./security/durableEvidenceStore";
 
 export interface GitHubSyncOptions {
   repo: string; // e.g. "owner/repo" or "scoobiii/vortex"
@@ -17,6 +23,8 @@ export interface GitHubSyncOptions {
   syncSpecs?: boolean;
   syncAttachments?: boolean;
   syncLiveFeed?: boolean;
+  requireDurableReceipt?: boolean;
+  persistenceReceipt?: PersistenceReceipt;
 }
 
 export interface SyncFileResult {
@@ -37,6 +45,11 @@ export interface GitHubSyncResult {
   syncHash: string;
   timestamp: string;
   message?: string;
+  gateBlocked?: boolean;
+  gateReason?: string;
+  writeAttestations?: GitHubWriteAttestation[];
+  is_execution_proof: false;
+  is_cryptographic_signature: false;
 }
 
 const sha256 = (content: string): string =>
@@ -256,6 +269,30 @@ export class GitHubSyncService {
       : (options.exportEntireProject ? "" : "docs");
     const commitMsg = options.commitMessage || (options.exportEntireProject ? `feat: export entire project codebase and system [GOS3]` : `docs(sync): sync conversation history, notes, and project sprints [GOS3]`);
 
+    // 0. Publication Gate Enforcement (Issue #4 / GOS3 Anti-Fabrication Invariant)
+    if (options.requireDurableReceipt) {
+      const gateResult = await evidenceStore.evaluatePublicationGate(
+        options.persistenceReceipt,
+        `${owner}/${repo}:${branch}`
+      );
+      if (!gateResult.allowed) {
+        return {
+          success: false,
+          gateBlocked: true,
+          gateReason: gateResult.reason,
+          repo: `${owner}/${repo}`,
+          branch,
+          syncedFiles: [],
+          totalFiles: 0,
+          syncHash: sha256("blocked"),
+          timestamp: new Date().toISOString(),
+          message: `Publicação no GitHub bloqueada pelo Publication Gate: ${gateResult.reason}`,
+          is_execution_proof: false,
+          is_cryptographic_signature: false,
+        };
+      }
+    }
+
     // 1. Verify repository access and default branch
     const connCheck = await this.testConnection(options.repo, token);
     if (!connCheck.success) {
@@ -274,6 +311,8 @@ export class GitHubSyncService {
         syncHash: sha256("empty"),
         timestamp: new Date().toISOString(),
         message: "Nenhum arquivo encontrado para sincronização.",
+        is_execution_proof: false,
+        is_cryptographic_signature: false,
       };
     }
 
@@ -367,6 +406,8 @@ export class GitHubSyncService {
       syncHash: finalHash,
       timestamp: new Date().toISOString(),
       message: `Sincronização concluída: ${successCount} de ${filesToSync.size} arquivos sincronizados com sucesso no GitHub (${owner}/${repo}).`,
+      is_execution_proof: false,
+      is_cryptographic_signature: false,
     };
   }
 }
