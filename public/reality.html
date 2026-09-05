@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>moltH Reality Gate</title>
+<style>body{font-family:system-ui,sans-serif;max-width:900px;margin:40px auto;padding:0 20px}h1{margin-bottom:4px}.score{font-size:64px;font-weight:800}.muted{opacity:.65}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.card{border:1px solid #ddd;border-radius:12px;padding:16px}.PASS{font-weight:700}.FAIL{font-weight:700}.UNPROVEN{font-weight:700}pre{white-space:pre-wrap;overflow:auto}</style>
+</head>
+<body>
+<h1>moltH Reality Gate</h1><div id="status" class="muted">Loading CI evidence…</div><div id="score" class="score">—</div><div id="checks" class="grid"></div><pre id="raw"></pre>
+<script>
+const source='/reality/reality-score.json';
+async function refresh(){
+  try{
+    const r=await fetch(source+'?t='+Date.now(),{cache:'no-store'});
+    const d=await r.json();
+    document.querySelector('#status').textContent=`${d.status} · commit ${d.commit_sha||'unknown'} · CI ${d.workflow_run_id||'not run'} · ${d.generated_at||'no evidence'}`;
+    document.querySelector('#score').textContent=d.score==null?'UNPROVEN':`${d.score}/${d.max_score}`;
+    document.querySelector('#checks').innerHTML=(d.checks||[]).map(c=>`<div class="card"><b>${c.label}</b><br><span class="${c.status}">${c.status}</span><br>${c.duration_ms??'—'} ms</div>`).join('');
+    document.querySelector('#raw').textContent=JSON.stringify(d,null,2);
+  }catch(e){document.querySelector('#status').textContent='UNAVAILABLE · '+e.message}
+}
+refresh(); setInterval(refresh,5000);
+</script>
+</body></html>
