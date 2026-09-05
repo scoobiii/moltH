@@ -1,0 +1,11 @@
+{
+  "schema_version": "reality-score/v1",
+  "generated_at": null,
+  "commit_sha": null,
+  "workflow_run_id": null,
+  "score": null,
+  "max_score": 100,
+  "status": "UNPROVEN",
+  "rule": "No CI evidence, no score.",
+  "checks": []
+}
