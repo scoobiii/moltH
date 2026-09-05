@@ -33,6 +33,11 @@ jobs:
       - name: Install
         run: npm ci
 
+      - name: Build GitHub Pages frontend
+        run: npm run build
+        env:
+          VITE_BASE_PATH: /moltH/
+
       - name: Run executable reality gate
         id: gate
         continue-on-error: true
@@ -75,7 +80,10 @@ jobs:
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/feat/reality-ci-live-docs')
         run: |
           mkdir -p public/reality
+          cp -R dist/. public/
+          cp public/reality.html public/reality/index.html
           cp docs/reality/reality-score.json public/reality/reality-score.json
+          cp public/index.html public/404.html
           touch public/.nojekyll
 
       - name: Configure GitHub Pages
