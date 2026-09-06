@@ -1,76 +1,104 @@
-> **GOS3** · agente: `Gemini / ProtocolEngine` · papel: `Architecture Decision Records & Governance` (ver docs/team.md)
-> fase: `Governança e Blindagem de Repositório (v1.4)` · data: `2026-09-06` · hora: `10:25:00 UTC`
-> antes: Prática tácita de CI verde sem trava vinculante formalizada nos docs centrais (Vortex PR #29 e SELIX PR #2)
-> depois: ADR-004 formalizando a obrigatoriedade de prova criptográfica de CI (Green-to-Main Gate) antes de qualquer merge ou commit em main
-> base: commit `gos3-core-v1.4`, INC-001, INC-002, Vortex PR #29, SELIX PR #2, docs/decisions.md
-> assinatura: `Gemini · Architecture Decision Records & Governance · GOS3`
+> **GOS3** · agente: `Vortex / EnforcementGate` · papel: `Architecture Decision Records & Governance` (ver docs/team.md)
+> fase: `Governança e Blindagem de Repositório` · data: `2026-09-06` · hora: `UTC`
+> antes: ADR-004 definia CI verde e evidence_hash, sem enforcement dedicado de deliverable truth
+> depois: ADR-004 vincula Vortex Enforcement, DREX/financeiro P0, mock escape, revisão independente e aprovação humana
+> base: commit `feat/vortex-enforcement-gate-drex`
+> assinatura: `Vortex / EnforcementGate · Architecture Decision Records & Governance · GOS3`
 
 # ADR-004: Trava Obrigatória de Branch Protection via Prova Criptográfica de CI (Green-to-Main Gate)
 
 ## 1. Status
 **APROVADO E VINCULANTE**  
-Aplica-se universalmente a todos os agentes autônomos (Claude, Gemini, Grok, Qwen, Manus, etc.) e a operadores humanos trabalhando em qualquer branch ou repositório do ecossistema GOS3 / moltH / Vortex.
-
----
+Aplica-se universalmente a todos os agentes autônomos e operadores humanos trabalhando em qualquer branch ou repositório do ecossistema GOS3 / moltH / Vortex.
 
 ## 2. Contexto e Motivação
 
 O princípio basilar da governança GOS3 é:
 > **"LLM propõe; sandbox executa; evidência prova; GOS3 decide."**
 
-Durante o ciclo de desenvolvimento, observou-se que correções estruturais (ex: casos Bend2, Vortex e SELIX) corriam risco de ser integradas ao branch estável `main` por conveniência operacional, aceitando como "garantia" o texto gerado por um modelo de linguagem afirmando que a correção estava testada e perfeita.
-
-Isso viola a premissa de Zero Simulação (ADR-002). Relato em linguagem natural de um LLM **não é evidência**. Sem um portão criptográfico obrigatório e impeditivo, o branch `main` fica vulnerável a quebras de build, testes comentados, mocks mascarados e regressões silenciosas.
-
-Embora o portão de CI verde já tivesse sido exercido na prática (Vortex PR #29 e SELIX PR #2), a ausência de uma regra canônica escrita permitia ambiguidades sobre se um agente poderia dar bypass sob urgência.
-
----
+Relato em linguagem natural de uma LLM não é evidência. CI verde também não autoriza uma implementação que esteja semanticamente falsa, simulada ou incompleta.
 
 ## 3. Cláusulas Vinculantes
 
 ### Cláusula 1: Portão Inegociável de CI Verde (Green-to-Main)
-Nenhuma proposição de código (patch, refactor, hotfix, novo agente, alteração de contrato ou PR) pode ingressar em `main` sem que:
-1. O linter / compilador TypeScript passe com **zero erros**: `npx tsc --noEmit` (exit code 0).
-2. A suíte completa de testes automatizados passe com **100% de sucesso**: `npm test` / `npx vitest run` (exit code 0, 0 falhas).
-3. As suites determinísticas específicas do módulo alterado atestem `PASS`.
+Nenhuma proposição de código pode ingressar em `main` sem TypeScript/lint sem erros, suíte canônica verde, suites determinísticas específicas e build de produção verde.
 
-### Cláusula 2: Emissão e Registro de Prova Criptográfica (`evidence_hash`)
-Toda aprovação de integração para `main` deve computar e anexar o `evidence_hash` canônico do ciclo de CI:
+### Cláusula 2: Prova Criptográfica (`evidence_hash`)
+Toda aprovação de integração deve registrar prova derivada da execução real. O hash canônico é:
 
-$$\text{evidence\_hash} = \text{sha256}(\text{stdout} + \text{stderr} + \text{exit\_code} + \text{duration\_ms})$$
+`evidence_hash = sha256(stdout + stderr + exit_code + duration_ms)`
 
-Este hash deve ser gerado a partir da saída bruta do processo de verificação executado no runtime real, vinculando:
-- `runtime_id`: identificador determinístico de 64 hex do ambiente de build;
-- `agent`: identificador do agente proponente;
-- `timestamp`: momento UTC da execução;
-- `test_summary`: total de testes executados e aprovados.
+A evidência deve vincular runtime, agente, timestamp e resumo dos testes. Uma string fornecida pela LLM não constitui prova.
 
 ### Cláusula 3: Vetos Expressos (Zero Bypass)
-São estritamente proibidos em qualquer circunstância:
-- `git push --force` ou `git push -f` no branch `main`.
-- Commits ou pushes contendo flags de bypass como `--no-verify`.
-- Omissão, exclusão ou mascaramento de testes para forçar passagem de CI.
-- Merges manuais aprovados por autoridade humana sem o log do CI verde indexado.
+São proibidos force push, `--no-verify`, exclusão/mascaramento de testes, enfraquecimento de assertions e merge humano sem CI verde e evidência.
 
-### Cláusula 4: Protocolo de Rollback Automático
-Se após o merge em `main` for constatada qualquer quebra ou divergência no ambiente integrado (ex: falha em smoke tests no Google Cloud Run, container start timeout, ou discrepância de `runtime_id`), o commit deve ser imediatamente revertido via `git revert` antes de qualquer outra atividade de desenvolvimento.
+### Cláusula 4: Rollback
+Quebra constatada após integração exige interrupção e `git revert` antes de nova atividade de desenvolvimento.
 
----
+## 4. Enforcement Vortex — Deliverable Truth
 
-## 4. Matriz de Conformidade de PR / Merge
+A partir desta alteração, CI não é somente um compilador: ele é também um **enforcement gate**. A LLM não possui autoridade para declarar PASS, execução, completude ou produção.
 
-| Etapa | Verificação Requerida | Critério de Aceite | Prova Exigida |
-|---|---|---|---|
-| **L1: Static** | `npx tsc --noEmit` | Exit code 0, 0 warnings de tipagem | Stdout limpo |
-| **L2: Unit/Contract** | `npm test` | Exit code 0, 100% passed | Log vitest com contagem exata |
-| **L3: Cryptographic Gate** | Cálculo do `evidence_hash` | Hash SHA-256 de 64 caracteres hex | stdout + stderr + exit_code + duration_ms |
-| **L4: Audit Trail** | Registro no envelope/commit | Hash presente no cabeçalho ou PR | Envelope GOS3 ou commit message canônica |
+Toda operação `CREATE`, `EDIT`, `DELETE`, `MOVE`, `RENAME`, `REPLACE`, `EXECUTE`, `PUBLISH` ou `MERGE` pode ser classificada pelo Vortex e bloqueada.
 
----
+Decisões possíveis:
 
-## 5. Relação com Outras Normas do GOS3
+`ALLOW | BLOCK | REQUIRE_REVIEW | REQUIRE_HUMAN_APPROVAL | QUARANTINE`
 
-- **ADR-002 (Zero Simulação)**: Proíbe simular aprovação de testes.
-- **ADR-003 (Runtime ID)**: Garante que o CI rodou no runtime identificado e auditável.
-- **docs/GIT-POLICY.md**: O push gate do repositório passa a ter ancoragem formal nesta ADR-004.
-- **docs/PLAYBOOK.md**: A seção 5 (Merge Gates) passa a ser a implementação operacional desta decisão.
+Regra operacional vinculante:
+
+> **MEXEU → ACHOU ERRO → CONSERTA.**
+
+Uma violação não pode ser contornada apagando, renomeando, movendo ou alterando o teste que a revelou.
+
+## 5. P0 — Security / Financial / DREX
+
+São P0, no mínimo:
+
+- DREX;
+- PIX;
+- wallet;
+- payment/banking/settlement;
+- financial/balance/account/money;
+- secret/credential/authentication/authorization;
+- security.
+
+Alterações P0 exigem runtime evidence, testes afetados, revisão independente e aprovação humana antes de `main`.
+
+## 6. Zero Mock Escape
+
+Mocks, fixtures e simulations são permitidos quando explicitamente confinados ao escopo de teste e identificados como tal. Um mock/fake/simulation/stub utilizado como implementação de produção é violação P0 e deve gerar `BLOCK`.
+
+A existência de um teste que usa mock não prova que a implementação de produção é real.
+
+## 7. Falha e Quarentena
+
+Quando o enforcement falhar:
+
+`INCIDENT → BLOCK/QUARANTINE → CORRECTION → INDEPENDENT REVIEW → CI → COMPLIANCE PASS → HUMAN APPROVAL → MAIN`
+
+O estado do incidente deve permanecer externo à LLM. A LLM recebe o erro, as condições de correção e as ações permitidas para a próxima etapa.
+
+## 8. Não-autodeclaração de PASS
+
+Nenhuma LLM ou agente executor pode declarar `PASS`, `implemented`, `executed`, `complete` ou `production-ready` como autoridade final. Essas propriedades precisam ser determinadas por runtime, verificadores, CI e governança.
+
+## 9. Matriz de Conformidade
+
+| Gate | Critério |
+|---|---|
+| L1 Static | TypeScript/lint exit 0 |
+| L2 Unit/Contract | 100% das suítes requeridas verdes |
+| L3 Enforcement | nenhum P0/mocking escape não resolvido |
+| L4 Evidence | evidência produzida pelo runtime |
+| L5 Independent Review | obrigatório para P0 |
+| L6 Human Approval | obrigatório para P0 antes de main |
+| L7 Audit Trail | incidente/evidence vinculados à alteração |
+
+## 10. Relação com Outras Normas
+
+- ADR-002: Zero Simulação.
+- ADR-003: Runtime ID.
+- `docs/GIT-POLICY.md`: publicação fail-closed.
+- `docs/PLAYBOOK.md`: processo operacional e correção obrigatória.
