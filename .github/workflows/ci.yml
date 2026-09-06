@@ -52,10 +52,10 @@ jobs:
         run: bun x vitest run src/server/vortexContract.sprint0.test.ts
 
       - name: Micro-Benchmarks & Hard Stress Test (5,000 ops)
-        run: bun run node tests/bench_hard.mjs
+        run: bun tests/bench_hard.mjs
 
       - name: Fault Tolerance & Degrade Stress Test (3,000 ops)
-        run: bun run node tests/stress_degrade.mjs
+        run: bun tests/stress_degrade.mjs
 
       - name: Compute Truth Matrix & Verifiable Progress %
         run: bun x tsx tests/audit/verify_readme_truth.ts
