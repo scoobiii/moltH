@@ -1,3 +1,10 @@
+> **GOS3** · agente: `Vortex / CI Repair` · papel: `CI Runtime / Dependency Integrity` (ver docs/team.md)
+> fase: `S0 — Fechar baseline de CI` · data: `2026-09-06` · hora: `13:30:00 -03:00`
+> antes: CI tentava `npm install` sem `package-lock.json` e falhava durante resolução de dependências (`Cannot read properties of null (reading 'edgesOut')`), antes dos testes.
+> depois: CI usa o lockfile `bun.lock` já versionado e instala de forma determinística com Bun antes de executar os gates existentes.
+> base: `main` commit atual; diagnóstico do workflow online
+> assinatura: `Vortex / CI Repair · CI Runtime / Dependency Integrity · GOS3`
+
 name: GOS3 Verifiable CI & Truth Matrix
 
 on:
@@ -21,34 +28,34 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Dependencies
-        run: |
-          if [ -f package-lock.json ]; then
-            npm ci
-          else
-            npm install
-          fi
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Install Dependencies (locked)
+        run: bun install --frozen-lockfile
 
       - name: TypeScript Lint / Compilation Check
-        run: npm run lint
+        run: bun run lint
 
       - name: Production Build Test (Vite + esbuild)
-        run: npm run build
+        run: bun run build
 
       - name: Vitest Comprehensive Audit Suite
-        run: npx vitest run
+        run: bun x vitest run
 
       - name: GOS3 Unified Full Coverage & 25 Deterministic Tools
-        run: npx tsx tests/gos3_full_coverage.test.ts
+        run: bun x tsx tests/gos3_full_coverage.test.ts
 
       - name: GOS3 Contract Gate & ADR-003 Runtime ID
-        run: npx vitest run src/server/vortexContract.sprint0.test.ts
+        run: bun x vitest run src/server/vortexContract.sprint0.test.ts
 
       - name: Micro-Benchmarks & Hard Stress Test (5,000 ops)
-        run: node tests/bench_hard.mjs
+        run: bun run node tests/bench_hard.mjs
 
       - name: Fault Tolerance & Degrade Stress Test (3,000 ops)
-        run: node tests/stress_degrade.mjs
+        run: bun run node tests/stress_degrade.mjs
 
       - name: Compute Truth Matrix & Verifiable Progress %
-        run: npx tsx tests/audit/verify_readme_truth.ts
+        run: bun x tsx tests/audit/verify_readme_truth.ts
