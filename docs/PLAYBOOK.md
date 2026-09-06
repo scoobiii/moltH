@@ -1,70 +1,60 @@
-> **GOS3** · agente: `SeniorOpsScrum / Claude / Gemini` · papel: `Lead Architect & Protocol Governance` (ver docs/team.md)
-> fase: `Technical Refinement (E4) & Visual Analytics Release` · data: `2026-08-22` · hora: `18:30:00 UTC`
-> antes: Playbook cobria até a regra 6 (ADR-003)
-> depois: Playbook completo GOS3 v1.2 (Cabeçalhos, Anti-Fabricação, Zero Fake Provider INC-002, Merge Gates e ADR-003)
-> base: commit `gos3-core-v1.2`
-> assinatura: `SeniorOpsScrum & Gemini · Protocol Governance · GOS3`
+> **GOS3** · agente: `Vortex / EnforcementGate` · papel: `Protocol Governance` (ver docs/team.md)
+> fase: `Governança e Blindagem de Repositório` · data: `2026-09-06` · hora: `UTC`
+> antes: Playbook tinha Merge Gates e Zero Fake Provider, sem enforcement operacional P0
+> depois: Playbook define bloqueio, correção, revisão independente e DREX P0
+> base: branch `feat/vortex-enforcement-gate-drex`
+> assinatura: `Vortex / EnforcementGate · Protocol Governance · GOS3`
 
 # PLAYBOOK — Vortex / GOS3 Protocol Standards
 
-Convenções de processo, engenharia e governança para o time NxN (qualquer agente ou humano que opere neste ecossistema).
-
----
-
 ## 1. Governança de Mudanças em Contrato & Segurança
 
-Qualquer alteração em `docs/GOS3-SPECIFICATION.md`, em contratos de invocação ou em mecanismos de isolamento de execução/sandbox **nunca é merge automático**. Decisões que envolvam alteração no shape de dados, na geração de hashes ou no relaxamento de timeouts passam obrigatoriamente por verificação formal e consenso do time.
+Qualquer alteração em contrato, segurança, isolamento ou execução é governada pelo Vortex Enforcement Gate e não pode ser liberada por declaração da LLM.
 
----
+## 2. Cabeçalho GOS3 Obrigatório
 
-## 2. Cabeçalho GOS3 Obrigatório (GOS3 Header Metadata)
+Todo arquivo criado ou editado por agente no ecossistema GOS3 deve conter o cabeçalho GOS3 correspondente.
 
-Todo arquivo criado ou editado por qualquer agente no ecossistema GOS3 **deve** conter o cabeçalho no topo:
+## 3. Prova de Execução & Zero Fake Provider
 
-```markdown
-> **GOS3** · agente: `<nome>` · papel: `<papel>` (ver docs/team.md)
-> fase: `<fase do backlog>` · data: `<AAAA-MM-DD>` · hora: `<HH:MM:SS TZ>`
-> antes: <resumo de 1 linha do estado anterior>
-> depois: <o que esta alteração entrega>
-> base: commit `<hash>` (se aplicável)
-> assinatura: `<nome do agente> · <papel> · GOS3`
-```
+Se executou: capturar `exit_code`, `stdout_raw`, `executionTimeMs` e gerar evidência SHA-256. Se não executou: `executed: false`. Ausência de credencial externa nunca pode ser apresentada como provedor real.
 
----
+## 4. Enforcement Imperativo — MEXEU → ACHOU ERRO → CONSERTA
 
-## 3. Protocolo de Prova de Execução & Zero Fake Provider (Zero-Trust Anti-Fabricação)
+O Vortex deve classificar e controlar `CREATE`, `EDIT`, `DELETE`, `MOVE`, `RENAME`, `REPLACE`, `EXECUTE`, `PUBLISH` e `MERGE`.
 
-- **Se executou**: capturar `exit_code`, `stdout_raw`, `executionTimeMs` e gerar `evidenceHash` (SHA-256).
-- **Se não executou ou falhou**: retornar explicitamente `executed: false`, `success: false` e detalhes em `logs`.
-- **Ausência de credencial de serviço externo**: retornar `status: "auth_required"` ou rotular o provedor honestamente como `provider: "local_simulation"` / `provider: "slm_fallback"`. **Jamais gerar texto estático que finja ser o provedor proprietário sem a chave correspondente presente (INC-002)**.
-- **Obediência a Prompts de Controle**: Em modo de simulação, respeitar comandos literais e de teste sem despejar templates genéricos de persona.
+A LLM propõe; o Vortex decide se a ação pode avançar. Em `BLOCK`, o runtime preserva o estado, registra a violação e fornece as ações de correção permitidas. Não existe bypass por insistência, reformulação do prompt ou nova chamada sem correção.
 
----
+## 5. P0 Security / Financial / DREX
 
-## 4. Portabilidade de Runtime & Resiliência (Termux / Alpine / Docker)
+`DREX`, `PIX`, `wallet`, `payment`, `banking`, `settlement`, `financial`, `balance`, `account`, `money`, `secret`, `credential`, `authentication`, `authorization` e `security` são tratados como P0 quando atingem implementação ou fluxo de produção.
 
-1. **Separação de Cotas**: O diretório `~/zAI` dentro do Proot Alpine é um chroot isolado. Nunca use `df /` do Termux host como referência para quotas do container; utilize sempre a sonda `runtimeCheck`.
-2. **Proteção de Segredos**: Nunca exponha chaves de API (`GEMINI_API_KEY`, tokens GitHub, etc.) em commits, logs públicos, READMEs ou comandos do terminal.
-3. **Gerenciamento de Memória**: Ambientes Android/arm64 operam com watchdog de RSS (<450MB) e acionamento proativo de `global.gc()`.
+P0 exige runtime evidence + testes + revisão independente + aprovação humana antes de publicação em `main`.
 
----
+## 6. Zero Mock Escape
 
-## 5. Portão de Testes & Verificação Contínua (Merge Gates — ADR-004)
+Mocks/fixtures/simulations são permitidos apenas quando confinados ao escopo de teste. Mock, fake, simulation ou stub usado como implementação de produção é bloqueado.
 
-Em conformidade obrigatória com o **ADR-004** (`docs/ADR-004-BRANCH-PROTECTION-CI-GATE.md`), nenhuma proposta ou PR pode ser integrada em `main` sem passar nos seguintes gates inegociáveis:
-1. **Linter / TypeScript**: `npx tsc --noEmit` (100% livre de erros de tipagem, exit code 0).
-2. **Suíte Canônica de Testes**: `npm test` / `npx vitest run` (100% de testes aprovados, zero falhas, exit code 0).
-3. **Prova Criptográfica**: Cálculo formal do `evidence_hash = sha256(stdout + stderr + exit_code + duration_ms)` do run de testes.
-4. **Build de Produção**: `npm run build` compilando frontend estático e servidor Node.js sem erros.
-5. **Zero Bypass**: Estritamente proibido `git push --force` ou `--no-verify`.
+**Teste com mock não prova implementação real.**
 
----
+## 7. Operações Destrutivas
 
-## 6. Handoff de Conteúdo & Proibição de Dependência de Links Externos (ADR-003)
+`DELETE`, `MOVE`, `RENAME` e `REPLACE` exigem análise de consumidores, imports, contratos e testes afetados. Se dependência não estiver resolvida, bloquear.
 
-1. **Injeção Direta**: Conteúdo técnico (código, logs, especificações) deve ser colado diretamente na conversa/contexto.
-2. **Dumps Locais**: Para arquivos volumosos, use dumps gerados localmente (`scripts/scrape_repo.py` ou arquivos de texto).
-3. **URLs Externas e Bloqueios WAF**: Não presumir que links públicos de terceiros (`claude.ai/share`, etc.) são acessíveis por agentes. Sem tool call real em sandbox liberada, declare obrigatoriamente `claim: "not_executed"`.
+## 8. Falha, Incidente e Quarentena
 
+Violação P0:
 
+`INCIDENT → BLOCK/QUARANTINE → CORRECTION → INDEPENDENT REVIEW → CI → COMPLIANCE PASS → HUMAN APPROVAL → MAIN`
 
+A memória do incidente fica no estado do Vortex/GOS3, não na memória presumida da LLM.
+
+## 9. Merge Gates
+
+O Green-to-Main continua obrigatório: lint/TypeScript, build, testes canônicos, testes determinísticos, Contract Gate, Enforcement Gate e evidência verificável. O CI atual executa as verificações técnicas existentes e o novo gate de deliverable truth. 
+
+## 10. Regra de verdade
+
+Se o resultado não puder ser observado pelo runtime/verificador, declarar `not_verified`; nunca PASS.
+
+LLM não é autoridade de execução, segurança, completude ou publicação.

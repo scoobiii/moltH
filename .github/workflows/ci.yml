@@ -40,6 +40,9 @@ jobs:
       - name: GOS3 Contract Gate & ADR-003 Runtime ID
         run: npx vitest run tests/contract_gate.test.ts
 
+      - name: Vortex Enforcement / Deliverable Truth / DREX P0 Gate
+        run: npx vitest run tests/compliance/deliverable_truth_gate.test.ts
+
       - name: Micro-Benchmarks & Hard Stress Test (5,000 ops)
         run: node tests/bench_hard.mjs
 

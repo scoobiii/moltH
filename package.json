@@ -10,11 +10,12 @@
     "start": "node dist/server.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.cjs",
-    "test": "vitest run && tsx tests/gos3_full_coverage.test.ts",
+    "test": "vitest run && tsx tests/gos3_full_coverage.test.ts && tsx tests/compliance/deliverable_truth_gate.test.ts",
     "test:vitest": "vitest run",
     "test:sprint0": "vitest run src/server/vortexContract.sprint0.test.ts",
-    "test:ci": "vitest run && tsx tests/gos3_full_coverage.test.ts && node tests/bench_hard.mjs && node tests/stress_degrade.mjs && tsx tests/audit/verify_readme_truth.ts",
+    "test:ci": "vitest run && tsx tests/gos3_full_coverage.test.ts && tsx tests/compliance/deliverable_truth_gate.test.ts && node tests/bench_hard.mjs && node tests/stress_degrade.mjs && tsx tests/audit/verify_readme_truth.ts",
     "test:matrix": "tsx tests/audit/verify_readme_truth.ts",
+    "test:compliance": "vitest run tests/compliance/deliverable_truth_gate.test.ts",
     "lint": "tsc --noEmit"
   },
   "dependencies": {
@@ -44,10 +45,8 @@
     "esbuild": "^0.25.0",
     "jsdom": "^30.0.1",
     "tailwindcss": "^4.1.14",
-    "text-encoding": "^0.7.0",
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
-    "vite": "^6.2.3",
     "vitest": "^4.1.11"
   }
 }
