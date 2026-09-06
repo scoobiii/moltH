@@ -11,6 +11,27 @@ Todas as alterações notáveis neste projeto são documentadas neste arquivo, s
 
 ---
 
+## [1.5.0] - 2026-09-06 — ADR-006 DELIVERABLE-TRUTH GATE, Domínios Protegidos P0 & Conformidade CI
+
+### 🚀 Adicionado
+- **Norma Vinculante ADR-006 & DELIVERABLE-TRUTH GATE (`docs/ADR-006-DELIVERABLE-TRUTH-GATE.md`)**:
+  - Instituição da barreira algorítmica de entregável (`scripts/deliverable_truth_gate.py` e `src/lib/deliverableTruthGate.ts`).
+  - Domínios protegidos P0: `wallet`, `pix`, `drex`, `financial`, `banking`, `payment`, `settlement`, `balance`, `account`, `secret`, `credential`.
+  - Regra Vinculante 7: Nenhum agente pode declarar PASS, implemented ou production-ready enquanto houver simulação fora de quarentena ou bloqueio no gate.
+  - Princípio "Mexeu → Achou Erro → Conserta": A detecção de mock/erro inicia formalmente o ciclo de correção; expressamente proibido recriar mocks para forçar aprovação do compilador (`tsc`).
+- **Suíte de Auditoria do Truth Gate (`tests/audit/deliverable_truth_gate.test.ts`)**:
+  - 10 cenários rigorosos de validação cobrindo detecção de mocks, isolamento de fixtures de teste, persistência durável e regras P0.
+- **Auditoria INC-003**:
+  - Post-mortem do mock zumbi de carteira e loop reativo registrado em `docs/incidents.md` com plano de remediação definitiva e call-site cleanup.
+
+### 🛡️ Corrigido / Hardening
+- **Saneamento de Mocks & Domínios Financeiros**:
+  - Eliminação de mocks de carteira R$ 4k e stubs em rotas de produção e serviços de voz/n8n.
+  - Transição de status honestos para `offline_audit` e `auth_required` com hashes canônicos SHA-256 de 64 caracteres hexadecimais.
+  - Verificação integrada no CI via `npm run test:ci` (Vitest, GOS3 full coverage, bench_hard, stress_degrade, verify_readme_truth).
+
+---
+
 ## [1.4.0] - 2026-08-28 — Model Context Protocol (MCP v1.0) & Estabilização Recharts
 
 ### 🚀 Adicionado

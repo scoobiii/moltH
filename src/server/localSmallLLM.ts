@@ -16,8 +16,8 @@ export const PROVIDER_ENV_MAP: Record<string, string> = {
 
 /**
  * Validates if the actual API key for the requested provider exists in the runtime environment.
- * Zero Fake Provider Guard (INC-002 / ADR-002):
- * If the key is absent, responses must strictly report provider: 'local_simulation'
+ * Zero-Unverified-Provider Guard (INC-002 / ADR-002):
+ * If the key is absent, responses must strictly report provider: 'local_offline'
  */
 export function hasRealKey(provider: string): boolean {
   const normalized = (provider || "").toLowerCase();
@@ -63,7 +63,7 @@ export class LocalSmallLLM {
     const rawProvider = agent.provider || "gemini";
     const rawModel = agent.model || "local-slm-v2";
 
-    // Strict provider guard (INC-002 Zero Fake Provider)
+    // Strict provider guard (INC-002 Zero-Unverified-Provider)
     const keyAvailable = hasRealKey(rawProvider);
     const provider = keyAvailable ? rawProvider : "local_simulation";
     const model = keyAvailable ? rawModel : "local-template-v1";

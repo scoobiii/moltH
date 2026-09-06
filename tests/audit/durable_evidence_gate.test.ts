@@ -82,7 +82,7 @@ describe("GOS3 Issue #4: Runtime Storage Invariant & Publication Gate", () => {
   });
 
   it("4. Falha de persistência no backend durável => publicação bloqueada", async () => {
-    durableBackend.setSimulateFailure(true);
+    durableBackend.setInjectFailure(true);
     store.setBackend(durableBackend);
 
     const failedReceipt = await store.persistEvidence(sampleRecord);

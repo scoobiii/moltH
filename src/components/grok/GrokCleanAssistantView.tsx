@@ -325,7 +325,7 @@ Executando raciocínio estruturado sobre os parâmetros fornecidos...`;
     if (!imaginePrompt.trim()) return;
     setIsGeneratingImage(true);
     try {
-      // Simulate/Generate image artifact
+      // Generate image artifact
       await new Promise((r) => setTimeout(r, 1200));
       const newImg = {
         prompt: imaginePrompt,

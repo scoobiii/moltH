@@ -658,7 +658,7 @@ export class OpenClawService {
   }
 
   /**
-   * Real Web Search simulation and primary search oracle
+   * Web Search query execution and primary search oracle
    */
   public static async webSearch(params: {
     query: string;

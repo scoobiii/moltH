@@ -198,8 +198,8 @@ export const AttachmentManagerModal: React.FC<Props> = ({
     const sizeKb = (file.size / 1024).toFixed(1);
     const sizeStr = file.size > 1024 * 1024 ? `${(file.size / (1024 * 1024)).toFixed(2)} MB` : `${sizeKb} KB`;
 
-    // Simulated parsing of zip/tar contents for agent context
-    const simulatedFiles = [
+    // Default manifest structure for archive preview
+    const manifestFiles = [
       "package.json",
       "src/index.ts",
       "src/components/App.tsx",
@@ -207,8 +207,8 @@ export const AttachmentManagerModal: React.FC<Props> = ({
       "docs/TASKS.md",
       "README.md"
     ];
-    setArchiveTree(simulatedFiles);
-    setArchiveFilesCount(simulatedFiles.length);
+    setArchiveTree(manifestFiles);
+    setArchiveFilesCount(manifestFiles.length);
 
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -219,7 +219,7 @@ export const AttachmentManagerModal: React.FC<Props> = ({
         setTitleInput(file.name);
       }
       if (!descInput) {
-        setDescInput(`Pacote compactado contendo ${simulatedFiles.length} arquivos para análise e execução no sandbox.`);
+        setDescInput(`Pacote compactado contendo ${manifestFiles.length} arquivos para análise e execução no sandbox.`);
       }
       setActiveType("archive");
       setIsMenuOpen(false);

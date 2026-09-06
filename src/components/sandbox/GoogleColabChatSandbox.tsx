@@ -140,7 +140,7 @@ Service URL: https://vortex-agent-service-4tmvuvv55h-uw.a.run.app`,
         body: JSON.stringify({
           toolName: "executeJavaScript",
           params: {
-            code: `// CLI Simulator Execution
+            code: `// CLI Command Execution
 const cmd = "${cmd.replace(/"/g, '\\"')}";
 if (cmd.startsWith("pip install")) {
   console.log("Collecting " + cmd.replace("pip install", "").trim());

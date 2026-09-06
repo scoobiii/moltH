@@ -1,11 +1,11 @@
 > **GOS3** · agente: `SeniorOpsScrum / Claude / Gemini` · papel: `Lead Architect & Documentation Master` (ver docs/team.md)
-> fase: `Technical Refinement (E4) & Visual Analytics Release` · data: `2026-08-22` · hora: `18:50:00 UTC`
-> antes: Índice de documentação sem referências a decisions.md, incidents.md e specs v0.3
-> depois: Índice geral completo e versionado no padrão GOS3 v1.2 com links diretos a todos os artefatos
-> base: commit `gos3-core-v1.2`
+> fase: `Norma Vinculante GOS3 — DELIVERABLE-TRUTH GATE & Domínios Protegidos P0 (v1.5)` · data: `2026-09-06` · hora: `12:15:00 UTC`
+> antes: Índice de documentação com versionamento v1.2
+> depois: Índice geral completo e versionado no padrão GOS3 v1.5 com referências a ADR-004, ADR-005, ADR-006 e Deliverable Truth Gate
+> base: commit `gos3-core-v1.5`
 > assinatura: `SeniorOpsScrum & Gemini · Documentation Master · GOS3`
 
-# Vortex / Molt Hybrid Hub — Documentação & Histórico (GOS3 v1.2)
+# Vortex / Molt Hybrid Hub — Documentação & Histórico (GOS3 v1.5)
 
 Este diretório armazena todo o repositório documental, especificações do protocolo GOS3, histórico de conversações, auditorias de telemetria e runbooks operacionais.
 
@@ -16,8 +16,8 @@ Este diretório armazena todo o repositório documental, especificações do pro
 ```
 docs/
 ├── README.md                                  # Este índice geral e guia de navegação
-├── GOS3-SPECIFICATION.md                      # Especificação Formal do Protocolo GOS3 v1.0 / v1.2
-├── CHANGELOG.md                               # Histórico completo de versões (v1.0.0, v1.1.0, v1.2.0)
+├── GOS3-SPECIFICATION.md                      # Especificação Formal do Protocolo GOS3 v1.0 / v1.5
+├── CHANGELOG.md                               # Histórico completo de versões (v1.0.0 a v1.5.0)
 ├── PLAYBOOK.md                                # Regras, convenções e merge gates do time NxN
 ├── RUNBOOK.md                                 # Runbook de Inicialização Segura (Termux / Alpine / Docker)
 ├── BACKLOG.md                                 # Backlog e status dos sprints (Sprints 1 a 5 Concluídos)
@@ -58,3 +58,10 @@ docs/
 O documento canônico do Sprint 0 está em [`SPRINT-0-VORTEX-CONTRACT.md`](SPRINT-0-VORTEX-CONTRACT.md). A especificação normativa atualizada está em [`specs/invocation-contract-v0.1.md`](specs/invocation-contract-v0.1.md). O contrato é implementado em `../src/server/vortexContract.ts`, com testes em `../src/server/vortexContract.sprint0.test.ts` e gate interoperável em `../tests/contract_test.py`.
 
 Os endpoints read-only de validação são `POST /api/gos3/contract/request/validate` e `POST /api/gos3/contract/receipt/validate`. O Sprint 0 não altera as alegações de produção, autenticação federada, Lean/Z3, K6 externo ou runtime remoto; essas capacidades continuam sujeitas a validação própria.
+
+---
+
+## Atualização 2026-09-06 — ADR-006 & DELIVERABLE-TRUTH GATE (v1.5)
+
+A norma vinculante ADR-006 está em [`ADR-006-DELIVERABLE-TRUTH-GATE.md`](ADR-006-DELIVERABLE-TRUTH-GATE.md). Ela define o DELIVERABLE-TRUTH GATE algorítmico (`scripts/deliverable_truth_gate.py` e `src/lib/deliverableTruthGate.ts`), a proteção mandatória de domínios P0 (financeiro, carteiras, DREX, PIX), a Regra Vinculante 7 e o princípio "Mexeu → Achou Erro → Conserta". O post-mortem do mock zumbi de carteira e loop reativo está documentado em [`incidents.md`](incidents.md) sob o identificador **INC-003**.
+

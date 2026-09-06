@@ -1,0 +1,56 @@
+[
+  {
+    "seq": 0,
+    "prev_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "invocation_id": "genesis",
+    "runtime_id": "vortex-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "stdout": "",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_ms": 0,
+    "evidence_hash": "aeebad4a796fcc2e15dc4c6061b45ed9b373f26adfc798ca7d2d8cc58182718e",
+    "timestamp_iso": "2026-09-06T13:43:20.468447+00:00",
+    "goal_hash": "c4dcff7c3171ef0ab2fb36e61c15dea7116ff652966e9a02f7ec45bae6588319",
+    "goal": "integrar Supabase auth/DB e melhorar UI",
+    "record_hash": "44075ab12ec3724f96051f301f627de6d674e4ae5987c9389765f6d2febe5e6f"
+  },
+  {
+    "seq": 1,
+    "prev_hash": "44075ab12ec3724f96051f301f627de6d674e4ae5987c9389765f6d2febe5e6f",
+    "invocation_id": "plan",
+    "runtime_id": "vortex-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "stdout": "plano: 3 fases",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_ms": 42,
+    "evidence_hash": "ddbc10d01631ea4481844763d09adde5e89b92d70a6b0ede2960266a38d25218",
+    "timestamp_iso": "2026-09-06T13:43:20.468468+00:00",
+    "record_hash": "89cf7fbd7a347103f4225a872f0ca31897934262ea43d9c294f4d30698000e3d"
+  },
+  {
+    "seq": 2,
+    "prev_hash": "89cf7fbd7a347103f4225a872f0ca31897934262ea43d9c294f4d30698000e3d",
+    "invocation_id": "impl-auth",
+    "runtime_id": "vortex-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "stdout": "auth ok",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_ms": 1210,
+    "evidence_hash": "f6d89b0e8185175349f555f25a308baba1e86f44656325aac36a4b6912871c87",
+    "timestamp_iso": "2026-09-06T13:43:20.468478+00:00",
+    "record_hash": "17d587f96bc5b0a23a82fd765faa22238ce049d3412c960dda9b2eee614471e0"
+  },
+  {
+    "seq": 3,
+    "prev_hash": "17d587f96bc5b0a23a82fd765faa22238ce049d3412c960dda9b2eee614471e0",
+    "invocation_id": "tests",
+    "runtime_id": "vortex-bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb",
+    "stdout": "12 passed",
+    "stderr": "",
+    "exit_code": 0,
+    "duration_ms": 380,
+    "evidence_hash": "e3c09ce2d9b73c4f1b49c946e8d5719bdce82ecb6bb7eee60fddb821b0730df7",
+    "timestamp_iso": "2026-09-06T13:43:20.468484+00:00",
+    "record_hash": "61a81a4c20821d5bd16fcbac7a0fcdda4e6d3e4c47a7bc3531dfc32b2b27dab9"
+  }
+]

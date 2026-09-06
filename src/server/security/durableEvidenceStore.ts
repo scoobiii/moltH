@@ -151,14 +151,14 @@ export class VerifiedDurableBackend implements IDurableBackend {
   public readonly backendId: string;
   public readonly isDurable = true;
   private records: Map<string, DurableEvidenceRecord> = new Map();
-  private simulateFailure = false;
+  private injectFailure = false;
 
   constructor(backendId = "firestore_durable") {
     this.backendId = backendId;
   }
 
-  public setSimulateFailure(fail: boolean) {
-    this.simulateFailure = fail;
+  public setInjectFailure(fail: boolean) {
+    this.injectFailure = fail;
   }
 
   public async persist(record: DurableEvidenceRecord): Promise<PersistenceReceipt> {
@@ -166,7 +166,7 @@ export class VerifiedDurableBackend implements IDurableBackend {
     const reference = `${this.backendId}://evidence_records/${record.id}`;
     const persisted_at = Date.now();
 
-    if (this.simulateFailure) {
+    if (this.injectFailure) {
       const failedReceipt: PersistenceReceipt = {
         receipt_id,
         backend: this.backendId,

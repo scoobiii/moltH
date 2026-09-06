@@ -205,7 +205,7 @@ export function DevOpsView({
           stderr: bashJson.stderr || "",
           exitCode: bashJson.exitCode ?? 0,
           durationMs: elapsed,
-          evidenceHash: bashJson.evidenceHash || "sha256:bash_probe_executed",
+          evidenceHash: bashJson.evidenceHash || "",
           runtimeId: "427273fd",
           toolExecuted: "executeBash",
         });

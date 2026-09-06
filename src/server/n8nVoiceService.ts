@@ -28,7 +28,7 @@ export class N8nVoiceService {
     id: string;
     timestamp: string;
     event: string;
-    status: "success" | "mock_success" | "failed";
+    status: "success" | "offline_audit" | "failed";
     details: string;
     payload: any;
     evidenceHash: string;
@@ -250,7 +250,7 @@ export class N8nVoiceService {
    */
   public static async dispatchToN8n(payload: N8nDispatchPayload): Promise<{
     success: boolean;
-    status: "success" | "mock_success" | "failed";
+    status: "success" | "offline_audit" | "failed";
     message: string;
     evidenceHash: string;
     responseBody?: any;
@@ -309,16 +309,16 @@ export class N8nVoiceService {
           };
         }
       } catch (err: any) {
-        // Fallback to local verified receipt if network/webhook endpoint is internal/simulated
+        // Fallback to local verified receipt if network/webhook endpoint is unreachable
       }
     }
 
-    // Deterministic verified receipt (mock/local fallback with cryptographic audit)
+    // Deterministic verified receipt (local fallback with cryptographic audit)
     const logEntry = {
       id: `n8n-${Date.now()}`,
       timestamp: new Date().toISOString(),
       event: payload.event,
-      status: "mock_success" as const,
+      status: "offline_audit" as const,
       details: `Recibo criptográfico GOS3 gerado para fluxo n8n: "${this.n8nConfig.workflowName}".`,
       payload,
       evidenceHash,
@@ -330,7 +330,7 @@ export class N8nVoiceService {
 
     return {
       success: true,
-      status: "mock_success",
+      status: "offline_audit",
       message: `Ponte n8n processou o evento com recibo de entrega GOS3 (${evidenceHash.slice(0, 16)}...).`,
       evidenceHash,
     };

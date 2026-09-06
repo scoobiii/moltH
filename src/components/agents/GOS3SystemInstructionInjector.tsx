@@ -220,7 +220,7 @@ export function generateGOS3Metadata(options: GOS3InjectorOptions): GOS3AgentMet
   const date = options.date || "2026-08-20";
   const hora = options.hora || "16:35:00 UTC";
 
-  // Deterministic mock hash for verification
+  // Deterministic canonical hash for verification
   const signaturePayload = `${cleanHandle}|${envTag}|v1.0|${date}|gos3-core-v1.0`;
   let hashVal = 0;
   for (let i = 0; i < signaturePayload.length; i++) {

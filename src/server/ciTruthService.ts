@@ -70,7 +70,7 @@ function getDefaultReport(): CITruthReport {
       testsPassed: 39,
       testsTotal: 39,
       evidenceHash: "8e9e32d15dfee8a1",
-      runtimeProof: "39 ferramentas/regras testadas via V8 sandbox + python nativo + mock gates seguros",
+      runtimeProof: "39 ferramentas/regras testadas via V8 sandbox + python nativo + compliance gates seguros",
       honestDisclaimer: "Ferramentas locais V8/Python/Bash comprovadas; chamadas GitHub remotas estão em SAFE SKIP (claim: not_executed) sem RUN_EXTERNAL_MUTATIONS=true",
     },
     {

@@ -533,7 +533,7 @@ export class AgentRunner {
       steps.push(...slmRes.steps);
     }
 
-    // Determine actual provider & model (INC-002 Zero Fake Provider)
+    // Determine actual provider & model (INC-002 Zero-Unverified-Provider)
     const keyAvailable = hasRealKey(provider);
     const effectiveProvider: ModelProviderId = slmResult 
       ? (slmResult.providerIdentifier as ModelProviderId) 

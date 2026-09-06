@@ -25,11 +25,11 @@ export function OwnerView({ showToast }: { showToast: (msg: string) => void }) {
   const [activeTab, setActiveTab] = useState<'sovereignty' | 'wal' | 'rules' | 'legal'>('sovereignty')
 
   const sampleWalBlocks = [
-    { block: 400, hash: "sha256:427273fd-Zeh-Sobrinho-ROOT", action: "ROOT_SOVEREIGNTY_ASSERT", agent: "H", ts: "Agora" },
-    { block: 399, hash: "sha256:8892a01bfce82901aB771239c0bcA810", action: "TENANT_ISOLATION_VERIFIED", agent: "BiAgent", ts: "Há 2 min" },
-    { block: 398, hash: "sha256:3319018bcFe82901aB771239c0bcA810", action: "PPA_CONTRACT_EXECUTION", agent: "ErpAgent", ts: "Há 5 min" },
-    { block: 397, hash: "sha256:99018bcFe82901aB771239c0bcA8104272", action: "BESS_ARBITRAGE_CYCLE", agent: "FinanceAgent", ts: "Há 12 min" },
-    { block: 396, hash: "sha256:119018bcFe82901aB771239c0bcA8108872", action: "AUDIT_COMPLIANCE_PASS", agent: "ComplianceAgent", ts: "Há 18 min" }
+    { block: 400, hash: "6501c518b2c4e427273fd08a14493f2da07d25599a74a6fbe318908a14493f2d", action: "ROOT_SOVEREIGNTY_ASSERT", agent: "H", ts: "Agora" },
+    { block: 399, hash: "8892a01bfce82901ab771239c0bca810427273fd2bdb12e608222856fd248a4a", action: "TENANT_ISOLATION_VERIFIED", agent: "BiAgent", ts: "Há 2 min" },
+    { block: 398, hash: "3319018bcfe82901ab771239c0bca810427273fd2bdb12e608222856fd248a4a", action: "PPA_CONTRACT_EXECUTION", agent: "ErpAgent", ts: "Há 5 min" },
+    { block: 397, hash: "99018bcfe82901ab771239c0bca810427273fd2bdb12e608222856fd248a4a", action: "BESS_ARBITRAGE_CYCLE", agent: "FinanceAgent", ts: "Há 12 min" },
+    { block: 396, hash: "119018bcfe82901ab771239c0bca810887273fd2bdb12e608222856fd248a4a", action: "AUDIT_COMPLIANCE_PASS", agent: "ComplianceAgent", ts: "Há 18 min" }
   ]
 
   const toggleKillSwitch = () => {
@@ -56,7 +56,7 @@ export function OwnerView({ showToast }: { showToast: (msg: string) => void }) {
               Console de Soberania Absoluta (Owner)
             </h2>
             <p className="text-zinc-400 text-xs sm:text-sm mt-1 font-mono">
-              H_ROOT_HASH: <span className="text-amber-300">sha256:427273fd-Zeh-Sobrinho-ROOT</span>
+              H_ROOT_HASH: <span className="text-amber-300">6501c518b2c4e427273fd08a14493f2da07d25599a74a6fbe318908a14493f2d</span>
             </p>
           </div>
 
@@ -169,7 +169,7 @@ export function OwnerView({ showToast }: { showToast: (msg: string) => void }) {
               </div>
               <div className="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800">
                 <div className="text-zinc-500 font-mono text-[10px]">HASH CANÔNICO DA SOBERANIA</div>
-                <div className="text-amber-300 font-mono text-[11px] break-all mt-0.5">sha256:427273fd-Zeh-Sobrinho-ROOT</div>
+                <div className="text-amber-300 font-mono text-[11px] break-all mt-0.5">6501c518b2c4e427273fd08a14493f2da07d25599a74a6fbe318908a14493f2d</div>
               </div>
               <div className="p-2.5 rounded-lg bg-zinc-950 border border-zinc-800">
                 <div className="text-zinc-500 font-mono text-[10px]">TENANT MEx VINCULADO</div>

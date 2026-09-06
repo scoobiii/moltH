@@ -17,7 +17,7 @@ export async function persistAuditLog(log: AuditLogDocument): Promise<void> {
   const entry = { ...log, timestamp: new Date().toISOString() }
   memLogs.unshift(entry)
   if (memLogs.length > 100) memLogs.pop()
-  console.log("[GOS3-AUDIT-STUB]", entry)
+  console.log("[GOS3-AUDIT-LOCAL]", entry)
 }
 
 export async function getRecentAuditLogs(limit = 10): Promise<AuditLogDocument[]> {

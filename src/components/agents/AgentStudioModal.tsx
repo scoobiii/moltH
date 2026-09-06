@@ -289,7 +289,7 @@ export const AgentStudioModal: React.FC<Props> = ({
                     issueDate: new Date().toISOString().slice(0, 10),
                     verificationUrl: `https://verify.edu/cert/${handle.replace("@", "").trim()}`,
                     sha256Hash: `0x${Math.random().toString(16).slice(2, 10)}${Math.random().toString(16).slice(2, 10)}`,
-                    skills: ["OpenClaw V8", "GitHub Agency", "Neural Simulation"],
+                    skills: ["OpenClaw V8", "GitHub Agency", "Neural Networks"],
                   },
                 ],
                 socialPresence: {

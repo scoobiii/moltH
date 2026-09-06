@@ -81,7 +81,7 @@ export function InteractiveTutorialGuide({ onOpenChat }: { onOpenChat: (handle: 
     }
   ]
 
-  // Auto-play steps simulation
+  // Auto-play tutorial steps
   React.useEffect(() => {
     let timer: any
     if (isPlaying) {

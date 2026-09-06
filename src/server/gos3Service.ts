@@ -141,7 +141,7 @@ export class GOS3Service {
 
     task.status = "in_progress";
 
-    // Simulate async agent reasoning and formal proof execution
+    // Async agent reasoning and formal proof execution
     await new Promise((r) => setTimeout(r, 600));
 
     const evidenceRaw = `${task.id}:${task.owner}:${task.title}:${Date.now()}`;

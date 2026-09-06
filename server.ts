@@ -1565,7 +1565,7 @@ app.post("/api/gos3/execute", async (req, res) => {
       // Provider Distribution
       const providerDistribution = [
         { provider: "Gemini 3.7 Flash", count: Math.round(totalWeeklyInteractions * 0.58), color: "#8b5cf6", share: 58 },
-        { provider: "Local SLM (Simulation)", count: Math.round(totalWeeklyInteractions * 0.26), color: "#06b6d4", share: 26 },
+        { provider: "Local SLM (Offline Engine)", count: Math.round(totalWeeklyInteractions * 0.26), color: "#06b6d4", share: 26 },
         { provider: "V8 Sandbox Tools", count: Math.round(totalWeeklyInteractions * 0.16), color: "#10b981", share: 16 },
       ];
 

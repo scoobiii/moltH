@@ -8,7 +8,7 @@ export const vortexGateway = {
     const llmRes = await fetch('http://localhost:3000/api/llm-proxy', {
       method:'POST',
       body: JSON.stringify({agentId, prompt})
-    }).then(r=>r.json()).catch(()=>({text: 'mock llm'}))
+    }).then(r=>r.json()).catch(()=>({ text: '', error: 'llm_service_unavailable', claim: 'not_executed' }))
     
     // 2. se tiver tool, executa V8 REAL como você já faz
     let receipt = null

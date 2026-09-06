@@ -74,7 +74,7 @@ export function SovereignVerificationSuite({
         {agents.map(a=>{ const r=results[a.id]; return <div key={a.id} className="border p-2 rounded flex justify-between"><span>{a.handle}</span><span className={r?.status==='passed'?'text-green-600':r?.status==='passed'?'text-red-600':''}>{r?.status||'idle'} {r?.evidenceHash?.slice(0,18)} {r?.latencyMs?r.latencyMs+'ms':''}</span><button onClick={()=>runAgentTest(a)} className="px-2 py-1 bg-gray-200 rounded">Test Real</button></div> })}
       </div>
       <div className="mt-6 text-xs">
-        <div>Recent WAL (stub honesto): {auditLogs.length}</div>
+        <div>Recent WAL (local em memória): {auditLogs.length}</div>
         {auditLogs.map((l,i)=><div key={i}>{l.agentHandle} {l.status} {l.evidenceHash?.slice(0,12)} {l.envTag}</div>)}
       </div>
     </div>

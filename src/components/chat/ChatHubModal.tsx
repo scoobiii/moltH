@@ -120,7 +120,7 @@ export const ChatHubModal: React.FC<Props> = ({
   const [n8nHistory, setN8nHistory] = useState<any[]>([]);
   const [isTestingN8n, setIsTestingN8n] = useState(false);
 
-  // Scale Architecture Simulator State
+  // Scale Architecture Planner State
   const [simUsersScale, setSimUsersScale] = useState<1000 | 10000000>(1000);
 
   const globalEndRef = useRef<HTMLDivElement>(null);

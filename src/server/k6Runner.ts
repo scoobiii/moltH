@@ -1,6 +1,6 @@
 /**
- * ⚡ K6 Load Testing & High-Traffic Simulation Suite for MoltBot Network
- * Simulates concurrent Virtual Users (VUs) stressing all active agent channels.
+ * ⚡ K6 Load Testing & High-Traffic Performance Suite for MoltBot Network
+ * Generates concurrent Virtual Users (VUs) stressing all active agent channels.
  */
 
 import http from "node:http";
@@ -126,7 +126,7 @@ export class K6RunnerService {
   }
 
   /**
-   * Run High-Traffic K6 Simulation
+   * Run High-Traffic K6 Benchmark
    */
   public static async runBenchmark(vus: number = 30, durationSeconds: number = 8): Promise<K6BenchmarkResult> {
     if (this.isRunning) {

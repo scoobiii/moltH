@@ -20,10 +20,14 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
 
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            npm install
+          fi
 
       - name: TypeScript Lint / Compilation Check
         run: npm run lint
@@ -38,7 +42,7 @@ jobs:
         run: npx tsx tests/gos3_full_coverage.test.ts
 
       - name: GOS3 Contract Gate & ADR-003 Runtime ID
-        run: npx vitest run tests/contract_gate.test.ts
+        run: npx vitest run src/server/vortexContract.sprint0.test.ts
 
       - name: Micro-Benchmarks & Hard Stress Test (5,000 ops)
         run: node tests/bench_hard.mjs

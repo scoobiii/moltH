@@ -65,7 +65,7 @@ export class FormalSkillVerifier {
       testPayload: "cosine_similarity_dimension_1536",
     },
     "openclaw-energy-bess": {
-      name: "BESS & Solar PV Simulation",
+      name: "BESS & Solar PV Modeling",
       category: "Engineering",
       testPayload: "capex: 1200000, capacityMWh: 4.5, lcoe: 42.5",
     },

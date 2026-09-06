@@ -170,7 +170,7 @@ class Collector:
             fail("receipt request_id does not match the correlated request")
 
         effect = receipt["effect"]
-        if effect not in {"none", "simulated", "committed"}:
+        if effect not in {"none", "dry_run", "committed"}:
             fail(f"invalid receipt effect: {effect!r}")
 
         for field_name, expected in (

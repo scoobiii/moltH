@@ -505,7 +505,7 @@ return { arbitrageGainAnnual, roiFactor: 1.42 };`);
                     </span>
                   </div>
                   <div className="text-emerald-300/80 leading-relaxed">
-                    Executa simultaneamente todas as ferramentas registradas no sandbox V8/Linux, validando determinismo matemático, integridade de memória vetorial e hashes criptográficos sem mock.
+                    Executa simultaneamente todas as ferramentas registradas no sandbox V8/Linux, validando determinismo matemático, integridade de memória vetorial e hashes criptográficos reais.
                   </div>
                 </div>
               </div>
