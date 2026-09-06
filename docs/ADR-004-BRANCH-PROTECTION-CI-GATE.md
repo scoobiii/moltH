@@ -55,6 +55,11 @@ São estritamente proibidos em qualquer circunstância:
 ### Cláusula 4: Protocolo de Rollback Automático
 Se após o merge em `main` for constatada qualquer quebra ou divergência no ambiente integrado (ex: falha em smoke tests no Google Cloud Run, container start timeout, ou discrepância de `runtime_id`), o commit deve ser imediatamente revertido via `git revert` antes de qualquer outra atividade de desenvolvimento.
 
+### Cláusula 5: Portão Duplo Obrigatório (CI + DELIVERABLE-TRUTH — ADR-006)
+O CI não decide sozinho que uma entrega é verdadeira. Nenhuma alteração pode ingressar em `main` sem aprovação cumulativa em dois portões:
+1. **Portão Observável (CI)**: `tsc` exit 0, `vitest` exit 0, build exit 0.
+2. **Portão de Fidelidade ao Entregável (DELIVERABLE-TRUTH GATE)**: Validação estrita de ausência de mocks em domínios P0 (`wallet`, `pix`, `drex`, `financial`, `banking`, `payment`, `settlement`, `balance`, `account`, `secret`, `credential`). Se o DELIVERABLE-TRUTH falhar, a submissão é sumariamente bloqueada por P0 Incident (Regra 7 vinculante).
+
 ---
 
 ## 4. Matriz de Conformidade de PR / Merge
@@ -63,8 +68,9 @@ Se após o merge em `main` for constatada qualquer quebra ou divergência no amb
 |---|---|---|---|
 | **L1: Static** | `npx tsc --noEmit` | Exit code 0, 0 warnings de tipagem | Stdout limpo |
 | **L2: Unit/Contract** | `npm test` | Exit code 0, 100% passed | Log vitest com contagem exata |
-| **L3: Cryptographic Gate** | Cálculo do `evidence_hash` | Hash SHA-256 de 64 caracteres hex | stdout + stderr + exit_code + duration_ms |
-| **L4: Audit Trail** | Registro no envelope/commit | Hash presente no cabeçalho ou PR | Envelope GOS3 ou commit message canônica |
+| **L3: Deliverable Truth (ADR-006)** | `DELIVERABLE-TRUTH GATE` | COMPLIANCE_PASS (zero mocks P0 em `src/`) | Prova do gate com hash de evidência |
+| **L4: Cryptographic Gate** | Cálculo do `evidence_hash` | Hash SHA-256 de 64 caracteres hex | stdout + stderr + exit_code + duration_ms |
+| **L5: Audit Trail** | Registro no envelope/commit | Hash presente no cabeçalho ou PR | Envelope GOS3 ou commit message canônica |
 
 ---
 
@@ -72,5 +78,6 @@ Se após o merge em `main` for constatada qualquer quebra ou divergência no amb
 
 - **ADR-002 (Zero Simulação)**: Proíbe simular aprovação de testes.
 - **ADR-003 (Runtime ID)**: Garante que o CI rodou no runtime identificado e auditável.
-- **docs/GIT-POLICY.md**: O push gate do repositório passa a ter ancoragem formal nesta ADR-004.
+- **ADR-006 (DELIVERABLE-TRUTH GATE)**: Impõe o bloqueio estrutural de mocks financeiros e estabelece a Regra 7.
+- **docs/GIT-POLICY.md**: O push gate do repositório passa a ter ancoragem formal nesta ADR-004 e ADR-006.
 - **docs/PLAYBOOK.md**: A seção 5 (Merge Gates) passa a ser a implementação operacional desta decisão.

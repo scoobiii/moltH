@@ -93,3 +93,43 @@ O `localSmallLLM.ts` implementava simulação local por templates de persona, e 
    - Em modo de simulação local, comandos diretos e de teste (como *"Responda só OK..."*) devem ser obedecidos literalmente, sem emitir templates longos de persona não solicitados.
 3. **Contrato de Invocação v0.3**:
    - Restringe o campo `provider` no schema a apenas provedores com `ENV_KEY_PRESENT=true` no momento do despacho.
+
+---
+
+## INC-003: Loop Reativo de Restauração de Mock Zumbi & Falha de Limpeza em Cascata (Dangling Reference)
+
+- **Data de Identificação**: 2026-09-06
+- **Reportado por**: `sobrinhoSJ@gmail.com`
+- **Severidade**: Alta — Quebra de Intenção do Usuário, Violação do Princípio Causa Raiz vs Patch e Regressão de Zero Simulação (ADR-002).
+- **Agentes / Componentes Envolvidos**:
+  - `vortex` (Commit `0581f73` no GitHub): Deletou `src/server/security/sovereignVault.ts` mas deixou referências órfãs.
+  - `GAIStudioDev` / `Agent Coder Auxiliar` (Workspace Cloud Run): Recriou repetidamente o mock para silenciar o erro de compilação sem investigar a causa raiz.
+  - Arquivos: `src/server/security/sovereignVault.ts`, `src/server/security/cryptoPolicy.ts`, `tests/audit/sovereign.test.ts`.
+
+### 1. Resumo do Incidente
+O operador humano deletou manualmente o arquivo `src/server/security/sovereignVault.ts` por 5 vezes consecutivas. A cada deleção, o agente coder auxiliar no Google AI Studio detectava erro no linter (`Cannot find module './sovereignVault'`) e, de maneira reativa e automatizada, **recriava o arquivo deletado**, restaurando um mock falso de carteiras e PIX de R$ 4.000 que violava o ADR-002.
+
+### 2. Causa Raiz Forense
+1. **Origem do Push no GitHub (Commit `0581f73`)**:
+   Em 2026-09-03T00:58:46Z, o agente/autor `vortex` deletou `sovereignVault.ts` no GitHub, mas não executou a limpeza em cascata dos arquivos consumidores (`cryptoPolicy.ts` e `tests/audit/sovereign.test.ts`), deixando o repositório com referências órfãs (*dangling imports*).
+2. **Comportamento Autômato do Agent Coder**:
+   O agente auxiliar priorizou cegamente a métrica de "linter verde" (`tsc exit code 0`) em vez de honrar a intenção explícita do usuário que deletou o arquivo. Ele operou sob a heurística errônea de "se o arquivo sumiu e o build quebrou, eu recrio", reintroduzindo código morto e mocks simulados.
+
+### 3. Aprendizados e Diretrizes Vinculantes
+1. **Regra de Limpeza em Cascata (Call-Site Cleanup)**:
+   Nenhum arquivo pode ser deletado sem que todas as suas referências de import em `src/` e `tests/` sejam simultaneamente eliminadas ou refatoradas no mesmo commit/etapa.
+2. **Regra de Respeito à Ação Destrutiva do Operador**:
+   Se o usuário deletar um arquivo, o agente é **expressamente proibido** de recriá-lo sem consentimento formal. O dever do agente é identificar quem dependia daquele arquivo e eliminar/sanar as dependências obsoletas.
+3. **Causa Raiz vs Patch & Mexeu → Achou Erro → Conserta**:
+   Erros de compilação pós-deleção (`tsc FAIL`) exigem a emissão de `CORRECTION REQUIRED` para sanar os consumidores, sendo estritamente proibido recriar mocks para calar o compilador.
+4. **Norma Vinculante ADR-006 & Regra 7**:
+   Instituição formal do DELIVERABLE-TRUTH GATE cobrindo domínios P0 (`wallet`, `pix`, `drex`, `financial`, `banking`, `payment`, `settlement`, `balance`, `account`, `secret`, `credential`).
+   Nenhum agente pode declarar PASS, implemented ou complete para a `main` se houver mock financeiro ou bloqueio no gate.
+
+### 4. Ações Corretivas Executadas
+1. Remoção definitiva de `src/server/security/cryptoPolicy.ts`.
+2. Remoção definitiva de backups temporários `sovereignVault.ts.bak`.
+3. Refatoração de `tests/audit/sovereign.test.ts` para testar o cofre criptográfico real em `src/lib/sovereignVault.ts`.
+4. Implementação do `DELIVERABLE-TRUTH GATE` em `src/lib/deliverableTruthGate.ts` e suíte de auditoria em `tests/audit/deliverable_truth_gate.test.ts`.
+5. Promulgação formal do **ADR-006** (`docs/ADR-006-DELIVERABLE-TRUTH-GATE.md` e `docs/decisions.md`).
+

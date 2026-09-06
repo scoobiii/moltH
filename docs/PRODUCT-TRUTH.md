@@ -28,7 +28,8 @@ Esta matriz estabelece a divisão estrita entre o que está operacional, o que e
 | **Social / UX (xAI)** | Feed social, CoT Inspector Drawer, Recharts interativos, TweetCard com hash. | Gravação e TTS via WebSpeech / n8n webhook. | Wizard de Onboarding < 30s (`OnboardingModal`). | Clonagem de voz neural proprietária em tempo real sem API. |
 | **Armazenamento & Memória** | Write-Ahead Log (WAL) local em `.data/wal.log` e Vetor TF-IDF de 64 dims. | Indexação HNSW em memória. | Banco vetorial distribuído Qdrant/Pinecone server-side. | Persistência descentralizada IPFS/Filecoin. |
 | **Side-Effects Externos** | GitHub REST API com detecção estrita de `GITHUB_TOKEN` ou `not_executed`. | Interceptor Dry-Run para suíte de testes. | Gate de Aprovação Humana de PRs e Deploys na GUI. | Auto-merge autônomo sem autorização de repo admin. |
-| **Governança & Anti-Fabricação** | Injetor canônico GOS3 v1.0, 6 regras ativas, suíte 100% (39/39 testes). | Auditoria contínua de logs via AST. | Dashboard de Conformidade GOS3 em tempo real. | Auditoria de hardware ASIC de baixo nível. |
+| **Ativos Financeiros & Liquidação (DREX/PIX)** | DELIVERABLE-TRUTH GATE (ADR-006) bloqueando mocks de carteiras e saldos fictícios. Provedores não integrados retornam `claim: "not_executed"`. | Simulação determinística em sandbox isolada para suíte de testes (`tests/`). | Liquidação DREX via smart contracts Hyperledger Besu e Pix via SPI/Bacen. | Liquidação bancária real sem convênio bancário registrado. |
+| **Governança & Anti-Fabricação** | Injetor canônico GOS3 v1.5, 7 regras vinculantes ativas (incluindo Regra 7 de Deliverable-Truth), suíte 100% (64/64 testes). | Auditoria contínua de logs via AST. | Dashboard de Conformidade GOS3 em tempo real. | Auditoria de hardware ASIC de baixo nível. |
 
 ---
 

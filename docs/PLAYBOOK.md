@@ -66,5 +66,23 @@ Em conformidade obrigatória com o **ADR-004** (`docs/ADR-004-BRANCH-PROTECTION-
 2. **Dumps Locais**: Para arquivos volumosos, use dumps gerados localmente (`scripts/scrape_repo.py` ou arquivos de texto).
 3. **URLs Externas e Bloqueios WAF**: Não presumir que links públicos de terceiros (`claude.ai/share`, etc.) são acessíveis por agentes. Sem tool call real em sandbox liberada, declare obrigatoriamente `claim: "not_executed"`.
 
+---
+
+## 7. Norma Vinculante de Domínios Protegidos P0 & Regra 7 (ADR-006)
+
+Em conformidade estrita com o **ADR-006** (`docs/ADR-006-DELIVERABLE-TRUTH-GATE.md`):
+
+1. **Domínios P0 Obrigatórios**:
+   `wallet`, `pix`, `drex`, `financial`, `banking`, `payment`, `settlement`, `balance`, `account`, `secret`, `credential`.
+2. **Diferenciação Estrita**:
+   $$\text{TEST FIXTURE / MOCK} \neq \text{PRODUCTION IMPLEMENTATION}$$
+   Mocks financeiros são sumariamente proibidos em arquivos de produção (`src/`).
+3. **Regra de Ouro (sovereignVault Pattern)**:
+   A detecção de um mock em produção **NÃO autoriza a deleção automática sem limpeza de dependências**. A descoberta de erro inicia formalmente o ciclo de correção. Se `tsc FAIL`, a resposta é obrigatoriamente `CORRECTION REQUIRED` (jamais recriar o mock).
+4. **Regra Vinculante 7 do GOS3**:
+   > **Nenhum agente pode declarar PASS, implemented, complete, production-ready ou equivalente quando o entregável estiver bloqueado por DELIVERABLE-TRUTH, mesmo que compilação e testes convencionais passem.**
+5. **Portão Duplo de Aprovação**: Para `main`, é compulsória a aprovação em ambos: `CI PASS` + `DELIVERABLE-TRUTH COMPLIANCE PASS`.
+
+
 
 

@@ -86,3 +86,27 @@
   - yAI fornece landing, branding, onboarding e componentes de entrada, sem criar outro backend.
   - Toda execução futura deve retornar o envelope GOS3 v0.1 antes de ser apresentada como sucesso.
 - **Consequência**: O Sprint 0 implementa a fronteira de contrato no moltH e deixa integração de runtime remoto, autenticação federada e E2E para sprints posteriores.
+
+---
+
+## ADR-006: DELIVERABLE-TRUTH GATE, Domínios Protegidos P0 (DREX/PIX) e Regra Vinculante 7
+
+> **GOS3** · agente: `Gemini / ProtocolEngine` · papel: `Architecture Decision Records & Protocol Governance` (ver docs/team.md)
+> fase: `Norma Vinculante GOS3 — DELIVERABLE-TRUTH GATE & Domínios Protegidos P0 (v1.5)` · data: `2026-09-06` · hora: `12:05:00 UTC`
+> antes: CI avaliava observabilidade técnica (compilação/testes), permitindo que mocks financeiros (carteiras/PIX/DREX) passassem para produção se compilassem
+> depois: DELIVERABLE-TRUTH GATE obrigatório, domínios protegidos P0 (DREX, PIX, Wallets, etc.), Regra 7 vinculante e barreira impeditiva para Main
+> base: commit `gos3-core-v1.5`, INC-001, INC-002, INC-003, ADR-002, ADR-004, docs/ADR-006-DELIVERABLE-TRUTH-GATE.md
+> assinatura: `Gemini · Architecture Decision Records & Protocol Governance · GOS3`
+
+- **Status**: **APROVADO E VINCULANTE (NORMA CONTRATUAL INEGOCIÁVEL DO GOS3)**
+- **Contexto**:
+  - A descoberta de um erro ou mock não autoriza o agente a apagar ou substituir arbitrariamente código na branch `main`. A descoberta de erro inicia formalmente o ciclo de correção.
+  - O CI sozinho não decide que uma implementação é verdadeira. O CI comprova propriedades observáveis técnicas (compilação, testes, invariantes). O DELIVERABLE-TRUTH comprova que o entregável corresponde ao contrato real e não deixa escapar mocks para produção.
+- **Decisões**:
+  1. **Domínios Protegidos P0 Obrigatórios**: Alterações em `wallet`, `pix`, `drex`, `financial`, `banking`, `payment`, `settlement`, `balance`, `account`, `secret` e `credential` entram obrigatoriamente no escopo do DELIVERABLE-TRUTH GATE.
+  2. **Diferenciação Estrita de Ambientes**: $\text{TEST FIXTURE / MOCK} \neq \text{PRODUCTION IMPLEMENTATION}$. Mocks são tolerados apenas em `/tests/`. Mocks em `/src/` em domínios P0 geram imediatamente `P0 INCIDENT / BLOCK AGENT`.
+  3. **Regra Vinculante 7 do GOS3**:
+     > *Nenhum agente pode declarar PASS, implemented, complete, production-ready ou equivalente quando o entregável estiver bloqueado por DELIVERABLE-TRUTH, mesmo que compilação e testes convencionais passem.*
+  4. **Regra Mexeu → Achou Erro → Conserta**: Se a remoção de um mock causar quebra de compilação (`tsc FAIL`), a resposta do agente é obrigatoriamente `CORRECTION REQUIRED` (limpar ou migrar os consumidores), sendo estritamente proibido recriar o mock para fazer o linter passar.
+  5. **Portão Duplo Obrigatório para Main**: Apenas a conjunção de `CI PASS` + `COMPLIANCE PASS (DELIVERABLE-TRUTH)` autoriza a submissão para aprovação em `main`.
+
