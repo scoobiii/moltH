@@ -22,7 +22,8 @@ docs/
 ├── RUNBOOK.md                                 # Runbook de Inicialização Segura (Termux / Alpine / Docker)
 ├── BACKLOG.md                                 # Backlog e status dos sprints (Sprints 1 a 5 Concluídos)
 ├── team.md                                    # Mapa oficial dos Agentes GOS3 e Runtime References
-├── decisions.md                               # Registro de Decisões Arquiteturais (ADR-001, ADR-002, ADR-003)
+├── decisions.md                               # Registro de Decisões Arquiteturais (ADR-001, ADR-002, ADR-003, ADR-004, ADR-005)
+├── ADR-004-BRANCH-PROTECTION-CI-GATE.md       # ADR-004 Trava Obrigatória de Branch Protection via Prova Criptográfica de CI
 ├── incidents.md                               # Post-mortems e auditorias (INC-001 Anti-Fabricação, INC-002 Zero Fake Provider)
 ├── SWOT-UX-GUI.md                             # Auditoria SWOT de Engenharia e Nota de Resiliência (3,0 / 3,0)
 ├── conversations/                             # Registros completos e transcrições de auditorias

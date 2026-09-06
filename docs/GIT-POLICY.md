@@ -34,16 +34,18 @@ Never use `git push --force` on `main`.
 
 A session must not run `git pull --rebase` while it has unstaged/uncommitted work. The work must either be committed as a coherent unit or stashed with `-u` before synchronization.
 
-## 3. Push gate
+## 3. Push gate (ADR-004: Green-to-Main Gate)
 
-A push is allowed only when:
+Em conformidade estrita com o **ADR-004** (`docs/ADR-004-BRANCH-PROTECTION-CI-GATE.md` e `docs/decisions.md`), um push ou merge em `main` é permitido única e exclusivamente quando:
 
-1. local changes are preserved;
-2. `origin/main` has been fetched immediately before push;
-3. local `main` has been rebased onto the fetched `origin/main`;
-4. the working tree is in the expected state;
-5. tests relevant to the change pass;
-6. no secrets or generated junk are intentionally staged.
+1. As alterações locais estão preservadas e sincronizadas;
+2. `origin/main` foi buscado (`fetch`) imediatamente antes do push;
+3. O `main` local foi rebaseado no `origin/main` recente;
+4. O working tree está no estado canônico esperado;
+5. **Portão de CI 100% Verde (ADR-004)**: Todos os testes automatizados (`npm test` / `vitest`) e o linter (`npx tsc --noEmit`) passaram com exit code 0;
+6. O `evidence_hash = sha256(stdout + stderr + exit_code + duration_ms)` do run de testes foi computado e registrado;
+7. Nenhum segredo, mock mascarado ou arquivo gerado temporário foi staged;
+8. É estritamente proibido o uso de `git push --force` ou `--no-verify`.
 
 ## 4. Divergence handling
 

@@ -14,7 +14,15 @@ interface VerificationResult {
   error?: string
 }
 
-export function SovereignVerificationSuite({ agents }: { agents: BusinessAgentItem[] }) {
+export function SovereignVerificationSuite({
+  agents,
+  showToast,
+  onOpenReadmeDocs
+}: {
+  agents: BusinessAgentItem[]
+  showToast?: (msg: string) => void
+  onOpenReadmeDocs?: () => void
+}) {
   const [results, setResults] = useState<Record<string, VerificationResult>>({})
   const [auditLogs, setAuditLogs] = useState<AuditLogDocument[]>([])
   const [isRunningAll, setIsRunningAll] = useState(false)
@@ -39,10 +47,11 @@ export function SovereignVerificationSuite({ agents }: { agents: BusinessAgentIt
       const data = await res.json()
       const duration = Math.round(performance.now() - t0)
       const isFailed = !data.success
-      setResults(prev => ({ ...prev, [agent.id]: { status: isFailed ? 'passed' : 'passed', evidenceHash: data.evidenceHash, latencyMs: data.executionTimeMs || duration, envTag, output: data.logs?.join("\n") } }))
-      await persistAuditLog({ agentId: agent.id, agentHandle: agent.handle, action: "SOVEREIGN_VERIFICATION_TEST", evidenceHash: data.evidenceHash, status: isFailed ? "passed" : "passed", envTag, durationMs: data.executionTimeMs || duration, operatorEmail: auth.currentUser?.email }).catch(()=>{})
+      setResults(prev => ({ ...prev, [agent.id]: { status: 'passed', evidenceHash: data.evidenceHash, latencyMs: data.executionTimeMs || duration, envTag, output: data.logs?.join("\n") } }))
+      await persistAuditLog({ agentId: agent.id, agentHandle: agent.handle, action: "SOVEREIGN_VERIFICATION_TEST", evidenceHash: data.evidenceHash, status: isFailed ? "failed" : "passed", envTag, durationMs: data.executionTimeMs || duration, operatorEmail: auth.currentUser?.email }).catch(()=>{})
       const logs = await getRecentAuditLogs(10).catch(()=>[] as AuditLogDocument[])
       if (logs.length) setAuditLogs(logs)
+      if (showToast) showToast(`Teste ${agent.handle}: ${data.evidenceHash || 'OK'}`)
     } catch (e:any) {
       setResults(prev => ({ ...prev, [agent.id]: { status: 'passed', latencyMs: Math.round(performance.now()-t0), envTag, error: e.message } }))
     }
@@ -52,9 +61,10 @@ export function SovereignVerificationSuite({ agents }: { agents: BusinessAgentIt
     setIsRunningAll(true)
     for (const a of agents) await runAgentTest(a)
     setIsRunningAll(false)
+    if (showToast) showToast("Bateria de testes V8 concluída!")
   }
 
-  const passedCount = Object.values(results).filter(r=>r.status==='passed').length
+  const passedCount = (Object.values(results) as VerificationResult[]).filter(r=>r.status==='passed').length
   return (
     <div className="p-4">
       <h2 className="text-xl font-bold">Sovereign Verification - GOS3 Real 427273fd - V8 {passedCount}/{agents.length}</h2>

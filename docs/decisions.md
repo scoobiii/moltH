@@ -1,9 +1,9 @@
-> **GOS3** · agente: `SeniorOpsScrum / Claude / Gemini` · papel: `Architecture Decision Records & Governance` (ver docs/team.md)
-> fase: `Technical Refinement (E4)` · data: `2026-08-22` · hora: `17:05:00 UTC`
-> antes: ADR-001 e ADR-002
-> depois: docs/decisions.md consolidado registrando ADR-001, ADR-002 e ADR-003 (Handoff Direto e Links Externos)
-> base: commit `gos3-core-v1.0`
-> assinatura: `SeniorOpsScrum & Gemini · Architecture Decision Records · GOS3`
+> **GOS3** · agente: `Gemini / ProtocolEngine` · papel: `Architecture Decision Records & Governance` (ver docs/team.md)
+> fase: `Technical Refinement (E4) & Governança v1.4` · data: `2026-09-06` · hora: `10:25:00 UTC`
+> antes: ADR-001, ADR-002 e ADR-003
+> depois: ADR-004 formalizando a Trava Obrigatória de Branch Protection via Prova Criptográfica de CI (Green-to-Main Gate) e ADR-005 (Vortex como GOS3 Core Único e moltH como Control Plane)
+> base: commit `gos3-core-v1.4`, INC-001, INC-002, Vortex PR #29, SELIX PR #2
+> assinatura: `Gemini · Architecture Decision Records & Governance · GOS3`
 
 # Registro de Decisões Arquiteturais (ADRs — GOS3)
 
@@ -39,10 +39,39 @@
   - É proibido presumir que outro agente ou instância conseguirá ler URLs de terceiros sem tool call real auditável em sandbox com conectividade liberada.
   - Na impossibilidade de acesso, o agente deve registrar `claim: "not_executed"` em conformidade com o ADR-002.
 
+---
 
-## ADR-004: Vortex como GOS3 Core Único e moltH como Control Plane
+## ADR-004: Trava Obrigatória de Branch Protection via Prova Criptográfica de CI (Green-to-Main Gate)
 
-> **GOS3** · agente: `Manus AI` · papel: `Architecture / Protocol Maintainer`
+> **GOS3** · agente: `Gemini / ProtocolEngine` · papel: `Architecture Decision Records & Governance`
+> fase: `Governança e Blindagem de Repositório (v1.4)` · data: `2026-09-06` · hora: `10:25:00 UTC`
+> antes: Prática tácita de CI verde exercida nos PRs (Vortex PR #29, SELIX PR #2), porém ausente de trava formal vinculante no docs/decisions.md e invocation-contract.md
+> depois: Regra formal e impeditiva: nenhuma proposição (patch, refactor, PR) vira commit em `main` sem CI 100% verde acompanhado de evidence_hash
+> base: INC-001, ADR-002, ADR-003, docs/GIT-POLICY.md, docs/PLAYBOOK.md
+> assinatura: `Gemini · Architecture Decision Records & Governance · GOS3`
+
+- **Status**: **APROVADO E VINCULANTE** (Aplicável a todo agente e operador humano, sem exceção)
+- **Contexto**:
+  - A premissa central do GOS3 determina: *"LLM propõe; sandbox executa; evidência prova; GOS3 decide"*.
+  - Propostas de alteração de código (patches, refatores, hotfixes como os do Bend2/Vortex) não podem ingressar na branch estável `main` baseadas unicamente em retórica, sínteses em linguagem natural ou presunções de funcionamento do modelo.
+  - A lacuna identificada consistia na inexistência de uma cláusula formal de branch protection que exigisse o selo verde de CI antes do merge em `main`.
+- **Decisões**:
+  1. **Regra de Portão Inegociável (Green-to-Main Gate)**: Nenhuma proposta, branch de feature ou hotfix pode ser mergeada ou commitada diretamente em `main` sem que a suíte canônica de testes e checagem estática passe com 100% de sucesso (`tsc --noEmit` exit 0, `vitest run` exit 0, zero testes falhando).
+  2. **Vínculo por Prova Criptográfica (`evidence_hash`)**: O aceite do merge em `main` exige o registro da evidência de execução real do CI:
+     $$\text{evidence\_hash} = \text{sha256}(\text{stdout} + \text{stderr} + \text{exit\_code} + \text{duration\_ms})$$
+     calculado sobre a saída dos testes e do linter gerados no runtime auditável.
+  3. **Proibição Estrita de Bypass**: Fica estritamente vetado:
+     - `git push --force` ou `-f` em `main`.
+     - Commits usando `--no-verify`.
+     - Desativação intencional de testes (comentar asserções ou usar mocks mascarados para forçar aprovação, infração grave segundo ADR-002).
+  4. **Rollback Automático Pós-Merge**: Se uma integração pós-merge em `main` apresentar regressão nos smoke tests de ambiente integrado, o commit deve ser revertido imediatamente (*fast rollback*) antes de qualquer novo trabalho de desenvolvimento.
+  5. **Invalidação de Alegações Textuais**: O relato em linguagem natural de um LLM dizendo "tudo passou" ou "código testado" não tem valor probatório no GOS3; somente o log do processo de teste e o respectivo hash constituem prova válida de entrega.
+
+---
+
+## ADR-005: Vortex como GOS3 Core Único e moltH como Control Plane
+
+> **GOS3** · agente: `Manus AI / Protocol Maintainer` · papel: `Architecture / Protocol Maintainer`
 > fase: `Sprint 0 — Vortex Contract Foundation` · data: `2026-08-30` · hora: `UTC`
 > antes: Contratos v0.1/v0.3 sobrepostos entre Vortex e moltH
 > depois: Vortex como autoridade de contrato/gate; moltH como produto/control plane; yAI como UX pública

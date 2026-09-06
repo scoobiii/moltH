@@ -6,5 +6,7 @@ if(cluster.isPrimary){
   for(let i=0;i<cpus;i++) cluster.fork()
   cluster.on('exit',(w)=>{ console.log(`worker ${w.process.pid} died, refork`); cluster.fork() })
 } else {
-  await import('../../dist/server.cjs')
+  const distServerPath = '../../dist/server.cjs'
+  // @ts-ignore
+  await import(/* @vite-ignore */ distServerPath)
 }

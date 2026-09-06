@@ -49,12 +49,14 @@ Todo arquivo criado ou editado por qualquer agente no ecossistema GOS3 **deve** 
 
 ---
 
-## 5. Portão de Testes & Verificação Contínua (Merge Gates)
+## 5. Portão de Testes & Verificação Contínua (Merge Gates — ADR-004)
 
-Antes de considerar qualquer entrega concluída, o agente deve executar os seguintes gates de validação:
-1. **Linter / TypeScript**: `npx tsc --noEmit` (100% livre de erros de tipagem).
-2. **Suite de Benchmark Determinístico**: `npx tsx scripts/benchmark_agent_tools.ts` (100% das 25 ferramentas com PASS e hashes gerados).
-3. **Build de Produção**: `npm run build` compilando frontend estático e servidor Node.js.
+Em conformidade obrigatória com o **ADR-004** (`docs/ADR-004-BRANCH-PROTECTION-CI-GATE.md`), nenhuma proposta ou PR pode ser integrada em `main` sem passar nos seguintes gates inegociáveis:
+1. **Linter / TypeScript**: `npx tsc --noEmit` (100% livre de erros de tipagem, exit code 0).
+2. **Suíte Canônica de Testes**: `npm test` / `npx vitest run` (100% de testes aprovados, zero falhas, exit code 0).
+3. **Prova Criptográfica**: Cálculo formal do `evidence_hash = sha256(stdout + stderr + exit_code + duration_ms)` do run de testes.
+4. **Build de Produção**: `npm run build` compilando frontend estático e servidor Node.js sem erros.
+5. **Zero Bypass**: Estritamente proibido `git push --force` ou `--no-verify`.
 
 ---
 
