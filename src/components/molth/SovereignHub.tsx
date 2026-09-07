@@ -60,13 +60,20 @@ const STORAGE_KEY = "molth_gos3_sovereign_hub_v1"
 export type StakeholderRole = "owner" | "admin" | "devops" | "user" | "agent" | "investor"
 
 export default function SovereignHub() {
-  // Global State with LocalStorage Persistence
+  // Global State - Defaults to unauthenticated guest until Firebase Auth confirms session
   const [currentUser, setCurrentUser] = useState<UserAuthProfile>(() => {
     try {
       const saved = localStorage.getItem(`${STORAGE_KEY}_user`)
-      return saved ? JSON.parse(saved) : DEFAULT_USER
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        // Never allow cached sessions with simulated root/owner roles to bypass real auth
+        if (parsed?.isLoggedIn && parsed?.provider !== "guest") {
+          return parsed
+        }
+      }
+      return GUEST_USER
     } catch {
-      return DEFAULT_USER
+      return GUEST_USER
     }
   })
 
@@ -98,10 +105,10 @@ export default function SovereignHub() {
   })
 
   // Role Perspective & Navigation State
-  const [activeRole, setActiveRole] = useState<StakeholderRole>("owner")
+  const [activeRole, setActiveRole] = useState<StakeholderRole>("user")
   const [activeNav, setActiveNav] = useState<
     "chat" | "mesh" | "feed" | "crypto" | "pricing" | "devops" | "owner" | "investor" | "landing" | "tests" | "mexlanding" | "readme"
-  >("owner")
+  >("chat")
 
   // Modals & UI Toggles
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false)
@@ -182,14 +189,20 @@ export default function SovereignHub() {
     setActiveRole(role)
     switch (role) {
       case "owner":
+        if (!currentUser.isLoggedIn) {
+          showToast("Acesso ao Console Owner exige autenticação Google.")
+          setIsAuthModalOpen(true)
+        }
         setActiveNav("owner")
-        showToast("Perspectiva: OWNER (H ROOT 427273fd)")
         break
       case "admin":
         setActiveNav("pricing")
         showToast("Perspectiva: ADMIN (MEx Org mex-427273fd)")
         break
       case "devops":
+        if (!currentUser.isLoggedIn) {
+          showToast("Acesso a DevOps SRE exige autenticação.")
+        }
         setActiveNav("devops")
         showToast("Perspectiva: DEVOPS (SRE & Telemetria)")
         break
@@ -659,7 +672,11 @@ export default function SovereignHub() {
         )}
 
         {activeNav === "owner" && (
-          <OwnerView showToast={showToast} />
+          <OwnerView 
+            showToast={showToast} 
+            currentUser={currentUser}
+            onOpenAuthModal={() => setIsAuthModalOpen(true)}
+          />
         )}
 
         {activeNav === "devops" && (

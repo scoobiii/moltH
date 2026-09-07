@@ -21,16 +21,30 @@ jobs:
         with:
           node-version: 22
 
+      - name: Setup Bun (Fast & Deterministic)
+        uses: oven-sh/setup-bun@v2
+        if: hashFiles('bun.lock') != ''
+        with:
+          bun-version: latest
+
       - name: Install Dependencies
         run: |
-          if [ -f package-lock.json ]; then
+          if command -v bun >/dev/null 2>&1 && [ -f bun.lock ]; then
+            echo "Installing via Bun (frozen lockfile)..."
+            bun install --frozen-lockfile
+          elif [ -f package-lock.json ]; then
+            echo "Installing via npm ci..."
             npm ci
           else
+            echo "Installing via npm install..."
             npm install
           fi
 
       - name: TypeScript Lint / Compilation Check
         run: npm run lint
+
+      - name: Deliverable Truth Gate (ADR-006)
+        run: python3 scripts/deliverable_truth_gate.py --root .
 
       - name: Production Build Test (Vite + esbuild)
         run: npm run build

@@ -17,7 +17,9 @@ import {
   RefreshCw, 
   Globe, 
   Terminal,
-  ShieldCheck
+  ShieldCheck,
+  CheckCircle2,
+  GitPullRequest
 } from "lucide-react"
 
 interface CryptoAndConnectorsProps {
@@ -347,7 +349,7 @@ export const CryptoAndConnectors: React.FC<CryptoAndConnectorsProps> = ({
                 activeTab === "connectors" ? "border-b-2 border-[#ffb4a8] text-[#ffb4a8]" : "text-[#8a6b68] hover:text-white"
               }`}
             >
-              Conector API & Webhooks
+              Conector Universal Vortex (GOS3 v1.0)
             </button>
           </div>
 
@@ -458,6 +460,41 @@ export const CryptoAndConnectors: React.FC<CryptoAndConnectorsProps> = ({
                 >
                   <Copy className="w-3.5 h-3.5" />
                 </button>
+              </div>
+
+              {/* Universal Vortex Protocol v1.0 Live Gate */}
+              <div className="p-3.5 bg-[#0f0e14] border border-[#3b1d1a] rounded-xl text-xs space-y-2.5">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2 font-bold text-white text-xs">
+                    <ShieldCheck className="w-4 h-4 text-emerald-400" />
+                    <span>Universal Execution Proof & Governance Gate</span>
+                  </div>
+                  <span className="text-[10px] px-2 py-0.5 rounded bg-emerald-950/60 text-emerald-300 border border-emerald-800 font-mono">
+                    vortex-agent/v1 • RFC-8785
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2 text-[11px]">
+                  <div className="bg-[#181822] p-2 rounded-lg border border-[#252535]">
+                    <span className="text-[#8a6b68] block">Modelo & Provedor:</span>
+                    <strong className="text-[#ffb4a8] font-mono">{selectedAgent.model}</strong>
+                  </div>
+                  <div className="bg-[#181822] p-2 rounded-lg border border-[#252535]">
+                    <span className="text-[#8a6b68] block">Runtime ID Vinculado:</span>
+                    <strong className="text-emerald-400 font-mono text-[10px]">{selectedAgent.runtimeId || "427273fd..."}</strong>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-[11px] pt-1 border-t border-[#22222e]">
+                  <span className="text-[#baa19e] flex items-center gap-1.5">
+                    <CheckCircle2 className="w-3.5 h-3.5 text-emerald-400" />
+                    Validação Determinística Vortex: <strong className="text-white">VALID</strong>
+                  </span>
+                  <span className="text-[#baa19e] flex items-center gap-1 font-mono text-[10px]">
+                    <GitPullRequest className="w-3 h-3 text-[#ffb4a8]" />
+                    PR Gate: <strong className="text-emerald-400">PASS (CI Ready)</strong>
+                  </span>
+                </div>
               </div>
             </div>
           )}

@@ -399,3 +399,17 @@ export async function callRealProvider(
     };
   }
 }
+
+// Re-export Universal Vortex Connector (GOS3 v1.0) components for complete ecosystem compatibility
+export * from "../../core/identity/types";
+export * from "../../core/hashing/canonicalHasher";
+export * from "../../core/evidence/evidenceCollector";
+export * from "../../core/execution/executionProofBuilder";
+export * from "../../core/validation/vortexValidator";
+export * from "../../adapters/generic/genericAdapter";
+export * from "../../adapters/github/githubAdapter";
+export * from "../../adapters/gpt/gptAdapter";
+export * from "../../adapters/claude/claudeAdapter";
+export * from "../../adapters/qwen/qwenAdapter";
+export * from "../../adapters/grok/grokAdapter";
+

@@ -19,10 +19,67 @@ import {
   Download
 } from 'lucide-react'
 import { EcosystemLegalSuite } from './EcosystemLegalSuite'
+import { UserAuthProfile } from './types'
 
-export function OwnerView({ showToast }: { showToast: (msg: string) => void }) {
+export function OwnerView({ 
+  showToast,
+  currentUser,
+  onOpenAuthModal
+}: { 
+  showToast: (msg: string) => void
+  currentUser?: UserAuthProfile
+  onOpenAuthModal?: () => void
+}) {
   const [killSwitchActive, setKillSwitchActive] = useState(false)
   const [activeTab, setActiveTab] = useState<'sovereignty' | 'wal' | 'rules' | 'legal'>('sovereignty')
+
+  // Strict Authentication & Owner Authorization Gate
+  const isAuthorizedOwner = Boolean(
+    currentUser?.isLoggedIn &&
+    (currentUser.role?.toLowerCase().includes("root") ||
+     currentUser.role?.toLowerCase().includes("owner") ||
+     currentUser.email?.toLowerCase().includes("sobrinho") ||
+     currentUser.email === "sobrinhoSJ@gmail.com")
+  )
+
+  if (!currentUser?.isLoggedIn || !isAuthorizedOwner) {
+    return (
+      <div className="space-y-6 text-zinc-100 max-w-4xl mx-auto py-12 px-4">
+        <div className="bg-zinc-900 border border-amber-500/30 rounded-2xl p-8 text-center shadow-2xl relative overflow-hidden">
+          <div className="w-16 h-16 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center mx-auto mb-5">
+            <Lock className="w-8 h-8 text-amber-400" />
+          </div>
+          
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 text-xs font-mono mb-3">
+            <ShieldAlert className="w-3.5 h-3.5" />
+            <span>ACESSO RESTRITO • H ROOT 427273fd</span>
+          </div>
+
+          <h2 className="text-2xl font-bold text-white mb-2">
+            Console de Soberania (Owner) Bloqueado
+          </h2>
+          
+          <p className="text-zinc-400 text-sm max-w-md mx-auto mb-6">
+            {!currentUser?.isLoggedIn
+              ? "Esta área contém controles sensíveis de governança da malha (Kill Switch, WAL, Políticas Zero-Trust). Faça login com sua Conta Google autorizada para continuar."
+              : "A conta atual não possui privilégios de Root Sovereign Operator para gerenciar esta console."}
+          </p>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+            {onOpenAuthModal && (
+              <button
+                onClick={onOpenAuthModal}
+                className="px-6 py-2.5 rounded-xl bg-amber-400 hover:bg-amber-300 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center gap-2"
+              >
+                <KeyRound className="w-4 h-4" />
+                <span>{currentUser?.isLoggedIn ? "Alternar Conta" : "Fazer Login com Google"}</span>
+              </button>
+            )}
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   const sampleWalBlocks = [
     { block: 400, hash: "6501c518b2c4e427273fd08a14493f2da07d25599a74a6fbe318908a14493f2d", action: "ROOT_SOVEREIGNTY_ASSERT", agent: "H", ts: "Agora" },

@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://vortex.gos3.io/schemas/protocol/benchmark.schema.json",
+  "title": "VortexBenchmarkRecord",
+  "type": "object",
+  "required": [
+    "agent",
+    "correctness",
+    "performance",
+    "change",
+    "reproducibility",
+    "governance",
+    "validation"
+  ],
+  "properties": {
+    "agent": {
+      "$ref": "./agent.schema.json"
+    },
+    "correctness": {
+      "type": "object",
+      "required": ["tests_passed", "tests_failed", "validation_result", "regression_delta"],
+      "properties": {
+        "tests_passed": { "type": "integer", "minimum": 0 },
+        "tests_failed": { "type": "integer", "minimum": 0 },
+        "validation_result": { "type": "string", "enum": ["PASS", "FAIL"] },
+        "regression_delta": { "type": "integer" }
+      },
+      "additionalProperties": false
+    },
+    "performance": {
+      "type": "object",
+      "required": ["execution_time_ms"],
+      "properties": {
+        "execution_time_ms": { "type": "number", "minimum": 0 },
+        "cpu_user_pct": { "type": "number" },
+        "memory_rss_mb": { "type": "number" },
+        "io_read_bytes": { "type": "number" },
+        "io_write_bytes": { "type": "number" }
+      },
+      "additionalProperties": true
+    },
+    "change": {
+      "type": "object",
+      "required": ["files_changed", "change_hash"],
+      "properties": {
+        "files_changed": { "type": "integer", "minimum": 0 },
+        "loc_added": { "type": "integer", "minimum": 0 },
+        "loc_removed": { "type": "integer", "minimum": 0 },
+        "change_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      },
+      "additionalProperties": false
+    },
+    "reproducibility": {
+      "type": "object",
+      "required": ["repository_state_hash", "execution_proof_hash"],
+      "properties": {
+        "repository_state_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "execution_proof_hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "environment_fingerprint": { "type": "string" }
+      },
+      "additionalProperties": false
+    },
+    "governance": {
+      "type": "object",
+      "required": ["policy_compliance", "header_compliance", "security_checks", "approval_status"],
+      "properties": {
+        "policy_compliance": { "type": "boolean" },
+        "header_compliance": { "type": "boolean" },
+        "security_checks": { "type": "string", "enum": ["PASS", "FAIL"] },
+        "approval_status": { "type": "string", "enum": ["APPROVED", "REJECTED", "PENDING_REVIEW"] }
+      },
+      "additionalProperties": false
+    },
+    "validation": {
+      "type": "string",
+      "enum": [
+        "VALID",
+        "INVALID_REPOSITORY_STATE",
+        "INVALID_POLICY",
+        "INVALID_PROOF",
+        "INVALID_EVIDENCE",
+        "INVALID_CHANGE",
+        "INVALID_PROTOCOL"
+      ]
+    }
+  },
+  "additionalProperties": false
+}

@@ -1,0 +1,27 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://vortex.gos3.io/schemas/protocol/agent.schema.json",
+  "title": "VortexAgentIdentity",
+  "type": "object",
+  "required": ["provider", "model"],
+  "properties": {
+    "provider": {
+      "type": "string",
+      "enum": ["gpt", "claude", "gemini", "qwen", "grok", "deepseek", "manus", "perplexity", "generic"]
+    },
+    "model": {
+      "type": "string",
+      "minLength": 1
+    },
+    "agent_id": {
+      "type": "string"
+    },
+    "handle": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}

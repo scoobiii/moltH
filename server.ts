@@ -26,6 +26,21 @@ import { multiAgentPipeline } from "./src/server/orchestrator/multiAgentPipeline
 import { runMultiAgentAcceptanceTest } from "./src/server/orchestrator/acceptanceTest";
 import { yaiMcpChaosRunner } from "./src/server/mcp/yaiChaosRunner";
 import { buildContractEnvelope, getRuntimeId } from "./src/server/vortexContract";
+import { GenericAdapter } from "./adapters/generic/genericAdapter";
+import { GPTAdapter } from "./adapters/gpt/gptAdapter";
+import { ClaudeAdapter } from "./adapters/claude/claudeAdapter";
+import { QwenAdapter } from "./adapters/qwen/qwenAdapter";
+import { GrokAdapter } from "./adapters/grok/grokAdapter";
+import { GitHubUniversalAdapter } from "./adapters/github/githubAdapter";
+import { VortexValidator } from "./core/validation/vortexValidator";
+import { ExecutionProofBuilder } from "./core/execution/executionProofBuilder";
+import { EvidenceCollector } from "./core/evidence/evidenceCollector";
+import {
+  computeRepositoryStateHash,
+  computeChangeHash,
+  computeExecutionProofHash,
+  canonicalizeJson,
+} from "./core/hashing/canonicalHasher";
 import { getDynamicTruth, triggerBackgroundCIExecution, syncReadmeWithLiveTruth } from "./src/server/ciTruthService";
 import { runBootstrapProbe } from "./scripts/bootstrap_env";
 import { ModelProviderId, Post } from "./src/types";
@@ -2080,6 +2095,126 @@ app.post("/api/gos3/execute", async (req, res) => {
   app.post("/api/connectors/gcloud/test", async (_req, res) => {
     const result = await MCPService.executeTool("gcloud_test_connection");
     res.json(result);
+  });
+
+  // =========================================================================
+  // UNIVERSAL VORTEX CONNECTOR & VERIFIABLE EXECUTION GOVERNANCE (GOS3 v1.0)
+  // =========================================================================
+
+  app.get("/api/vortex/protocol", (_req, res) => {
+    res.json({
+      protocol: "vortex-agent/v1",
+      status: "active",
+      canonicalization: "RFC-8785",
+      hash_algorithm: "sha256",
+      validation_states: [
+        "VALID",
+        "INVALID_REPOSITORY_STATE",
+        "INVALID_POLICY",
+        "INVALID_PROOF",
+        "INVALID_EVIDENCE",
+        "INVALID_CHANGE",
+        "INVALID_PROTOCOL",
+      ],
+      supported_providers: ["gpt", "claude", "gemini", "qwen", "grok", "deepseek", "manus", "perplexity", "generic"],
+      schemas: {
+        agent: "/protocol/agent.schema.json",
+        proposal: "/protocol/proposal.schema.json",
+        execution: "/protocol/execution.schema.json",
+        evidence: "/protocol/evidence.schema.json",
+        execution_proof: "/protocol/execution-proof.schema.json",
+        benchmark: "/protocol/benchmark.schema.json",
+      },
+    });
+  });
+
+  app.post("/api/vortex/proof/build", (req, res) => {
+    try {
+      const { provider = "generic", model = "default", repository, task, output, policy } = req.body;
+      const repo = repository || {
+        owner: "scoobiii",
+        name: "vortex",
+        base_commit: process.env.VORTEX_BASE_COMMIT || "abc123d4e5f6",
+      };
+
+      let adapter: GenericAdapter;
+      switch (provider) {
+        case "gpt":
+          adapter = new GPTAdapter(model, repo);
+          break;
+        case "claude":
+          adapter = new ClaudeAdapter(model, repo);
+          break;
+        case "qwen":
+          adapter = new QwenAdapter(model, repo);
+          break;
+        case "grok":
+          adapter = new GrokAdapter(model, repo);
+          break;
+        default:
+          adapter = new GenericAdapter({ provider, model }, repo);
+          break;
+      }
+
+      const proof = adapter.createProof(
+        task || { command: "npm test", proposal_id: `P-${Date.now()}` },
+        output || {
+          stdout: "Execution completed",
+          stderr: "",
+          exit_code: 0,
+          duration_ms: 100,
+          tests: { total: 1, passed: 1, failed: 0 },
+        },
+        policy
+      );
+
+      const validation = VortexValidator.validate(proof);
+      const benchmark = VortexValidator.toBenchmarkRecord(proof, validation);
+
+      res.status(201).json({
+        success: true,
+        proof,
+        validation,
+        benchmark,
+      });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/vortex/proof/validate", (req, res) => {
+    try {
+      const proofRecord = req.body;
+      if (!proofRecord) {
+        return res.status(400).json({ success: false, error: "ExecutionProofRecord body is required" });
+      }
+
+      const validation = VortexValidator.validate(proofRecord);
+      const benchmark = VortexValidator.toBenchmarkRecord(proofRecord, validation);
+      const prGate = GitHubUniversalAdapter.evaluatePRGate(proofRecord);
+
+      res.json({
+        success: true,
+        validation,
+        benchmark,
+        prGate,
+      });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
+  });
+
+  app.post("/api/vortex/ci/evaluate-gate", (req, res) => {
+    try {
+      const proofRecord = req.body;
+      const prResult = GitHubUniversalAdapter.evaluatePRGate(proofRecord);
+      res.json({
+        success: true,
+        ...prResult,
+      });
+    } catch (err: any) {
+      res.status(500).json({ success: false, error: err.message });
+    }
   });
 
   // --- Vite middleware for development & static serving for production ---

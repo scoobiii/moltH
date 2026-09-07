@@ -1,0 +1,34 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://vortex.gos3.io/schemas/protocol/evidence.schema.json",
+  "title": "VortexEvidence",
+  "type": "object",
+  "required": ["stdout_hash", "stderr_hash"],
+  "properties": {
+    "stdout_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "stderr_hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifacts": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["path", "hash"],
+        "properties": {
+          "path": { "type": "string" },
+          "hash": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+          "bytes": { "type": "integer", "minimum": 0 }
+        },
+        "additionalProperties": false
+      }
+    },
+    "environment_fingerprint": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": false
+}
