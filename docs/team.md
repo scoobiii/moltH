@@ -1,72 +1,65 @@
-# GOS3 — Gang of Seven Senior Scrum Agile Team
+# Team — Vortex GOS3 + moltH Runtime
 
-## Governance
+> **Canonical boundary:** Agent != Runtime. Vortex agents are sovereign **proposers/reviewers**; moltH is the execution runtime. NxN proposes/reviews; Nx1 executes.
+>
+> Canonical specification: `docs/VORTEX-SOVEREIGN-AGENTS.md`.
 
-The normative execution contract is `docs/vortex-agent-governance-contract.md`.
-Agent/persona/skill/model/connector are separate concepts.
+## Canonical Vortex Gang of Seven
 
-`env_tag` is supplied by the active runtime. If it is not supplied by a real
-execution adapter, its value is `unknown`.
+| Agent | Role | Execution authority | Provider/model | Status |
+|:---|:---|:---:|:---|:---:|
+| **Gemini** | Proposer / multimodal reviewer | **No** | Google Gemini | Active |
+| **Claude** | Proposer / software architecture reviewer | **No** | Anthropic Claude | Active |
+| **GPT** | Proposer / general reasoner | **No** | OpenAI GPT | Active |
+| **Qwen** | Proposer / code & numerical specialist | **No** | Alibaba Qwen | Active |
+| **DeepSeek** | Proposer / formal reasoning reviewer | **No** | DeepSeek | Active |
+| **Manus** | Proposer / implementation planner | **No** | Manus | Active |
+| **Perplexity** | Proposer / research & grounding reviewer | **No** | Perplexity | Active |
 
-## Gang of Seven — senior core
+**Grok/xAI** may participate as an external proposer/reviewer. It is not part of the canonical seven and is not the moltH runtime.
 
-| agent_id | pessoa | papel | skills principais |
-|---|---|---|---|
-| `dev-po` | Marina_PO | Product Owner | requirements, backlog, acceptance |
-| `dev-sm` | Camila_SM | Scrum Master | planning, facilitation, flow, metrics |
-| `dev-arch` | André_Arch | Software Architect | architecture, ADR, contracts |
-| `dev-be` | Diego_BE | Backend Lead | API, domain, persistence, security boundaries |
-| `dev-fe` | Pedro_FE | Frontend Lead | UI, state, integration, accessibility |
-| `dev-qa` | Juliana_QA | QA Lead | tests, regression, VUC verification |
-| `dev-devops` | Gustavo_DevOps | DevOps/SRE Lead | CI/CD, runtime, observability, release |
+## Sovereign runtime
 
-## Specialist cells
+| Component | Role | Execution authority | Provenance |
+|:---|:---|:---:|:---|
+| **moltH** | Sovereign runtime / control plane | **Yes** | `runtime_id` returned by each real execution receipt |
 
-| agent_id | pessoa | papel | skills principais |
-|---|---|---|---|
-| `dev` | Lucas_Dev | Software Engineer | implementation, refactor, debugging |
-| `vuc-test` | Bruno_Test | VUC Verification Engineer | deterministic tests, proof verification |
-| `vuc-user` | Rafael_VUC | VUC User / Acceptance | task acceptance, reproducibility, proof UX |
-| `dev-sec` | Felipe_Sec | Security Engineer | threat model, secrets, auth, supply chain |
-| `dev-data` | Renata_Data | Data/ML Engineer | datasets, tokenizer/model metadata, evaluation |
+The runtime owns the execution boundary: sandboxing, tool/connector authorization, persistence, output capture and evidence generation. An agent/model provider never becomes the runtime merely because it can generate text or has an API credential.
 
-## Claude / governance role
+## GOS3 execution contract
 
-When Claude participates in GOS3, its role is **Technical Architect / Governance
-Reviewer**: architecture, contracts, documentation and proof review.
+Every executable action follows:
 
-Claude is not the approval authority and must not claim repository or external
-execution without VUC evidence.
+```text
+Vortex proposer
+      |
+      | GOS3 invocation-contract v0.1
+      v
+moltH runtime
+      |
+      +--> authorization
+      +--> sandbox / connector
+      +--> actual execution
+      +--> stdout / stderr / exit_code / duration
+      v
+receipt
+  + runtime_id
+  + evidence_hash
+```
 
-## Connector policy
+`executed: true` is reserved for work actually performed by the runtime. `auth_required`, `timeout`, `error`, `local_simulation` and other non-success states must not be relabeled as successful external-provider execution.
 
-A connector is a capability, not an agent identity.
+## Governance rules
 
-Supported states:
-- `native_connector`
-- `vuc_connector`
-- `mcp_vuc`
-- `url_gateway`
-- `none`
+1. **No hidden execution privilege:** proposers cannot bypass the runtime boundary.
+2. **Provenance separation:** `agent`, `provider/model` and `runtime_id` are independent fields.
+3. **Evidence required:** executable claims require a receipt and evidence hash.
+4. **Zero Fake Provider:** missing provider credentials must be represented honestly.
+5. **NxN/Nx1:** many agents may propose or review; one compatible runtime executes a given invocation.
 
-GitHub, web/search, shell/VPS, cloud, database, storage, email and other
-external systems must be accessed through an authenticated connector or the
-VUC MCP/HTTP gateway with explicit scope.
+## References
 
-A model without a native connector may use:
-
-`LLM -> MCP or HTTPS -> VUC -> authenticated connector -> external system`
-
-The LLM does not receive connector credentials; VUC resolves identity, capability, policy, scope and proof.
-
-## Verification status
-
-Do not label an agent/provider as "100% conformant", "active", or
-"connector-verified" unless the active runtime produced evidence supporting
-that claim. Team membership is configuration; execution capability is runtime
-state.
-
-## NXN
-
-NXN orchestrates agents and dependencies. It does not replace the VUA,
-authorization layer, execution proof, or independent verification.
+- `docs/VORTEX-SOVEREIGN-AGENTS.md`
+- `docs/SPRINT-0-VORTEX-CONTRACT.md`
+- `docs/GOS3-SPECIFICATION.md`
+- Vortex canonical roster: `scoobiii/vortex` → `README.md`
