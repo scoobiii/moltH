@@ -18,7 +18,7 @@
     "lint": "tsc --noEmit",
     "preflight": "tsx scripts/preflight.ts",
     "test:coverage": "vitest run --coverage --coverage.reporter=text --coverage.reporter=json-summary",
-    "test:compliance": "vitest run tests/compliance/deliverable_truth_gate.test.ts"
+    "test:compliance": "vitest run tests/audit/deliverable_truth_gate.test.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
