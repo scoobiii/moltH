@@ -121,3 +121,9 @@ Automation must fail closed on conflicts, failed tests, or ambiguous state. It m
 GitHub rejects non-fast-forward pushes when the remote contains commits that the local branch does not contain, specifically to prevent loss of remote history. Fetching and integrating the remote work before pushing is the required safety boundary.
 
 This policy exists because multiple GOS3 sessions can commit concurrently. The remote repository is the shared coordination point; every publisher must synchronize against it immediately before publication.
+
+---
+
+## 10. Vortex Enforcement e P0
+
+Push/merge em `main` também exige Vortex Enforcement PASS, Deliverable Truth PASS e, para P0, runtime evidence + revisão independente + aprovação humana. Nunca usar force-push, `--no-verify`, mascarar testes ou declarar PASS por texto da LLM.

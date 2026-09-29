@@ -10,14 +10,15 @@
     "start": "NODE_ENV=production node dist/server-yai.cjs",
     "preview": "vite preview",
     "clean": "rm -rf dist server.cjs server-yai.cjs",
-    "test": "vitest run && tsx tests/gos3_full_coverage.test.ts",
+    "test": "vitest run && tsx tests/gos3_full_coverage.test.ts && tsx tests/compliance/deliverable_truth_gate.test.ts",
     "test:vitest": "vitest run",
     "test:sprint0": "vitest run src/server/vortexContract.sprint0.test.ts",
-    "test:ci": "vitest run && tsx tests/gos3_full_coverage.test.ts && node tests/bench_hard.mjs && node tests/stress_degrade.mjs && tsx tests/audit/verify_readme_truth.ts",
+    "test:ci": "vitest run && tsx tests/gos3_full_coverage.test.ts && tsx tests/compliance/deliverable_truth_gate.test.ts && node tests/bench_hard.mjs && node tests/stress_degrade.mjs && tsx tests/audit/verify_readme_truth.ts",
     "test:matrix": "tsx tests/audit/verify_readme_truth.ts",
     "lint": "tsc --noEmit",
     "preflight": "tsx scripts/preflight.ts",
-    "test:coverage": "vitest run --coverage --coverage.reporter=text --coverage.reporter=json-summary"
+    "test:coverage": "vitest run --coverage --coverage.reporter=text --coverage.reporter=json-summary",
+    "test:compliance": "vitest run tests/compliance/deliverable_truth_gate.test.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
