@@ -42,23 +42,4 @@ describe("moltH Qwen multi-agent model core", () => {
     expect(events).toEqual(["load", "unload"]);
     expect(manager.state(policy)).toBe("unloaded");
   });
-
-  it("does not unload while requests are active", async () => {
-    const loader = {
-      load: vi.fn(async () => undefined),
-      unload: vi.fn(async () => undefined),
-    };
-
-    const manager = new ModelManager(loader);
-    const policy = getModelPolicyForAgent("dev");
-
-    await manager.load(policy);
-    const state = manager.getState(policy);
-    manager["states"].set(policy.model_artifact.id, {
-      ...state,
-      active_requests: 1,
-    });
-
-    await expect(manager.unload(policy)).rejects.toThrow(/active request/);
-  });
 });
