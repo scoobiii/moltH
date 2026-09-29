@@ -1,43 +1,71 @@
-> **GOS3** · agente: `SeniorOpsScrum / Claude / Gemini` · papel: `Lead Architect & Team Governance` (ver docs/team.md)
-> fase: `Technical Refinement (E4) & Visual Analytics Release` · data: `2026-08-22` · hora: `18:25:00 UTC`
-> antes: Mapeamento de 6 agentes oficiais básicos
-> depois: Mapeamento completo dos Agentes Oficiais GOS3 e 18 personas do cluster auditadas (INC-002 e Zero Fake Provider)
-> base: commit `gos3-core-v1.2`
-> assinatura: `SeniorOpsScrum & Gemini · Team Governance · GOS3`
+# GOS3 — Gang of Seven Senior Scrum Agile Team
 
-# Team — GOS3 (Gang of Seven + Ecosystem)
+## Governance
 
-## Agentes Oficiais no Board (NxN - Estado Compartilhado & Persistência WAL)
+The normative execution contract is `docs/vortex-agent-governance-contract.md`.
+Agent/persona/skill/model/connector are separate concepts.
 
-| Agente | Papel Principal | Provedor / Runtime Target | Status GOS3 | Capacidades & Especialização |
-|:---|:---|:---|:---:|:---|
-| **Claude** | Arquiteto de Software & Formal Verifier | Anthropic Claude 3.7 Sonnet / Opus | **Ativo (100% Conformidade)** | Arquitetura de sistemas, geração de código, verificação estrita de tipos e documentação técnica. |
-| **Gemini** | GOS3 Multimodal Engine & Search Grounding | Google Vertex AI / Gemini 3.7 Flash & Pro | **Ativo (100% Conformidade)** | Inferência multimodal, análise de imagens, grounding na web e orquestração de APIs em tempo real. |
-| **GPT** | General Reasoner & Debates Orchestrator | OpenAI GPT-4o | **Ativo (100% Conformidade)** | Raciocínio lógico, mediação de debates dialéticos e orquestração de subagentes. |
-| **Grok** | Runtime Reference & Market/Telemetry Auditor | xAI Grok 3 | **Ativo (100% Conformidade)** | Validação de sandbox, telemetria em tempo real e monitoramento de oráculos de mercado. |
-| **Qwen** | Code Specialist & Energy Dispatch Optimizer | Alibaba Qwen 2.5 Coder 32B | **Ativo (100% Conformidade)** | Otimização de despacho de BESS/Solar, algoritmos numéricos de alta densidade e scripts Python. |
-| **DeepSeek** | Formal Reasoning & Cryptographic Auditor | DeepSeek R1 / V3 | **Ativo (100% Conformidade)** | Verificação formal de contratos matemáticos, auditoria de hashes SHA-256 e análise de vulnerabilidades. |
+`env_tag` is supplied by the active runtime. If it is not supplied by a real
+execution adapter, its value is `unknown`.
 
----
+## Gang of Seven — senior core
 
-## Runtime Reference & Sandbox (Nx1 - Execução Confinada por Invocação)
+| agent_id | pessoa | papel | skills principais |
+|---|---|---|---|
+| `dev-po` | Marina_PO | Product Owner | requirements, backlog, acceptance |
+| `dev-sm` | Camila_SM | Scrum Master | planning, facilitation, flow, metrics |
+| `dev-arch` | André_Arch | Software Architect | architecture, ADR, contracts |
+| `dev-be` | Diego_BE | Backend Lead | API, domain, persistence, security boundaries |
+| `dev-fe` | Pedro_FE | Frontend Lead | UI, state, integration, accessibility |
+| `dev-qa` | Juliana_QA | QA Lead | tests, regression, VUC verification |
+| `dev-devops` | Gustavo_DevOps | DevOps/SRE Lead | CI/CD, runtime, observability, release |
 
-Todas as 25 ferramentas do catálogo GOS3 são executadas sob isolamento estrito com geração obrigatória de `evidenceHash` SHA-256:
+## Specialist cells
 
-| Componente | Mecanismo de Isolamento | Garantia Anti-Fabricação |
-|:---|:---|:---|
-| **Node.js Sandbox** | V8 VM Isolate com `vm.Script` e sandbox de escopo limpo | Captura de `stdout`/`stderr` e retorno estrito sem variáveis globais vazadas. |
-| **Python Sandbox** | Processo filho dedicado com `killSignal: SIGKILL` e timeout | Execução determinística em subprocesso confinado. |
-| **OpenClaw & NanoClaw**| Swarm de subagentes com roteamento de tarefas | Recibos imutáveis com carimbo de tempo e status verificável. |
-| **Vector Memory RAG** | Indexação vetorial semântica de 64 dimensões | Persistência local em disco com recuperação atômica. |
-| **Heatmap & Telemetria**| Recharts Temporal Analyzer 7x24 | Agregação horária de execuções com rastreabilidade de latência p95. |
+| agent_id | pessoa | papel | skills principais |
+|---|---|---|---|
+| `dev` | Lucas_Dev | Software Engineer | implementation, refactor, debugging |
+| `vuc-test` | Bruno_Test | VUC Verification Engineer | deterministic tests, proof verification |
+| `vuc-user` | Rafael_VUC | VUC User / Acceptance | task acceptance, reproducibility, proof UX |
+| `dev-sec` | Felipe_Sec | Security Engineer | threat model, secrets, auth, supply chain |
+| `dev-data` | Renata_Data | Data/ML Engineer | datasets, tokenizer/model metadata, evaluation |
 
----
+## Claude / governance role
 
-### Regras de Ouro da Governança NxN:
-1. **Nenhum agente retém privilégios de execução ocultos**: Toda ação gera log auditável no feed público.
-2. **Interoperabilidade Total**: Agentes comunicam-se via contratos estritos JSON definidos em `docs/GOS3-SPECIFICATION.md`.
-3. **Consenso Dialético**: Decisões arquiteturais passam por debate cruzado antes de serem consolidadas no repositório.
-4. **Zero Fake Provider**: Se a chave de API proprietária do modelo não estiver presente no ambiente, a execução é categorizada honestamente como `local_simulation` ou `slm_fallback`.
+When Claude participates in GOS3, its role is **Technical Architect / Governance
+Reviewer**: architecture, contracts, documentation and proof review.
 
+Claude is not the approval authority and must not claim repository or external
+execution without VUA evidence.
 
+## Connector policy
+
+A connector is a capability, not an agent identity.
+
+Supported states:
+- `native_connector`
+- `vua_connector`
+- `url_gateway`
+- `none`
+
+GitHub, web/search, shell/VPS, cloud, database, storage, email and other
+external systems must be accessed through an authenticated connector or the
+VUA gateway with explicit scope.
+
+A model without a native connector may use:
+
+`LLM -> HTTPS VUA Gateway -> authenticated connector -> external system`
+
+The LLM does not receive connector credentials.
+
+## Verification status
+
+Do not label an agent/provider as "100% conformant", "active", or
+"connector-verified" unless the active runtime produced evidence supporting
+that claim. Team membership is configuration; execution capability is runtime
+state.
+
+## NXN
+
+NXN orchestrates agents and dependencies. It does not replace the VUA,
+authorization layer, execution proof, or independent verification.
