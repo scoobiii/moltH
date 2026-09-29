@@ -78,3 +78,6 @@ jobs:
 
       - name: Build
         run: npm run build
+
+      - name: 100% Code Coverage Gate
+        run: npm run test:coverage
