@@ -15,10 +15,10 @@ Agente != modelo != persona != skill != connector.
 - Persona: comportamento/estilo e contexto de responsabilidade.
 - Skill: capacidade operacional declarada.
 - Connector: meio autenticado de acesso a um sistema externo.
-- VUA/VUC: camada confiável que executa, coleta evidência e produz proof.
-- NXN: orquestra agentes e dependências; não substitui o VUA.
+- VUC: camada confiável de conexão, execução governada, evidência e proof.
+- NXN: orquestra agentes e dependências; não substitui o VUC.
 
-A ausência de connector nativo no aplicativo LLM não remove uma capacidade do agente. Quando permitido, a capacidade deve ser exposta pelo VUA através de API HTTP/HTTPS autenticada e auditável.
+A ausência de connector nativo no aplicativo LLM não remove uma capacidade do agente. Quando permitido, a capacidade deve ser exposta pelo VUC através de MCP ou API HTTP/HTTPS autenticada e auditável.
 
 ## 2. GOS3 Gang of Seven — núcleo sênior
 | agent_id | agente | papel sênior | skills primárias | connectors preferenciais |
@@ -45,29 +45,28 @@ Eu (Claude, quando atuando no GOS3): GOS3 Technical Architect / Governance, com 
 ## 3. Matriz de connector
 Connector é capacidade, não identidade.
 - native_connector: aplicativo/modelo possui connector integrado.
-- vua_connector: VUA possui connector e expõe operação ao agente.
-- url_gateway: VUA expõe API HTTPS navegável para LLM sem connector.
+- vuc_connector: VUC possui connector e expõe operação ao agente.
+- mcp_vuc: VUC expõe a capacidade governada via MCP.
+- url_gateway: VUC expõe API HTTP/HTTPS navegável para LLM sem connector nativo.
 - none: capacidade indisponível.
 
 Nunca inferir native_connector a partir do nome do modelo.
 
 ### GitHub
 Operações governadas incluem leitura de repository/file/tree, issues/projects, pull requests, Actions/workflow status, branch e PR conforme escopo concedido.
-O agente não ganha credencial GitHub por possuir skill de GitHub. Credencial, scope e aprovação pertencem ao VUA/connector.
+O agente não ganha credencial GitHub por possuir skill de GitHub. Credencial, scope, capability, policy e aprovação pertencem ao VUC/connector.
 
 ### Outros connectors
 A mesma regra vale para web/search, shell/VPS, cloud, database, Google Drive/Docs/Sheets/Calendar, email, n8n/webhooks e artifacts/storage.
 
 ## 4. API para LLM sem connector
-O VUA pode expor API HTTPS para qualquer LLM capaz de HTTP usar uma capacidade governada.
+O VUC oficial (`scoobiii/vuc`) expõe uma fronteira governada para apps LLM/agentes compatíveis com MCP. Para um LLM sem connector nativo, o fluxo é `LLM -> MCP ou HTTPS -> VUC -> authenticated connector -> external system`.
 
-Endpoint normativo: POST /api/vua/v1/tools/{tool_id}/invoke
-Request mínimo: { request_id, agent_id, skill_id, operation, input, approval_id? }
-Response mínimo: { request_id, status, result, evidence, execution_proof }
+O contrato normativo do VUC usa `VortexRequest`/`VortexResponse`, MCP (`vortex.inspect`, `vortex.propose`, `vortex.verify`, `vortex.execute`, `vortex.branch.write`, `vortex.llm.invoke`) e `ExecutionProof v1`. O proof inclui request/execution/runtime identity, connector, operation, executed, input/output hashes, policy/session/sandbox e assinatura Ed25519. Rejeições antes da execução devem ter `executed=false`.
 
 Regras: autenticação obrigatória; agent_id e skill_id validados; connector e scope resolvidos pelo VUA; wildcard proibido; mutação externa exige aprovação; resposta inclui evidência real; proof é verificável independentemente do LLM; segredo bruto não é entregue quando o VUA puder executar; erro/credencial/scope ausente fecha em success:false; URL recebida não implica autorização.
 
-Fluxo GitHub sem connector no LLM: LLM -> HTTPS -> VUA -> GitHub connector -> GitHub.
+Fluxo GitHub sem connector no LLM: LLM -> MCP/HTTPS -> VUC -> GitHub connector -> GitHub.
 
 ## 5. Determinismo
 Para verificações: temperature=0; seed fixo quando suportado; mesma entrada deve produzir o mesmo trace quando o runner/modelo permite determinismo; mudança de modelo, revision, tokenizer ou runtime invalida alegação de equivalência.
@@ -105,7 +104,7 @@ Não alterar schema, proof ou instruction sem atualizar testes e CI.
 The normative operational contract is `docs/vortex-agent-governance-contract.md`. It is authoritative for fail-closed external effects, ExecutionProof requirements, and runtime authorization.
 
 ## 14. Runtime system instruction
-O VUC deve: carregar este arquivo do checkout ativo; validar marcadores de governança; derivar a system instruction para o LLM; executar a operação dentro do sandbox/VUA; obter ExecutionProof real; verificar o proof independentemente; somente então reportar PASS.
+O VUC deve: carregar este arquivo do checkout ativo; validar marcadores de governança; derivar a system instruction para o LLM; executar a operação dentro do sandbox; obter ExecutionProof real; verificar o proof independentemente; somente então reportar PASS.
 Arquivo ausente, vazio, alterado sem aprovação ou proof não verificável = hard failure.
 
 ## 15. Regra para todos os fornecedores
