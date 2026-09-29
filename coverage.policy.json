@@ -1,10 +1,10 @@
 {
   "gate": [
-    "src/server/mexAgents.ts"
+    "src/server/mexAgents.ts",
+    "src/lib/deliverableTruthGate.ts"
   ],
   "pending": {
     "src/lib/crypto.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
-    "src/lib/deliverableTruthGate.ts": "100% linhas/functions/statements; branches 94.87%, pendente fechamento do branch",
     "src/lib/deviceEnvironment.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
     "src/lib/executionChain.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
     "src/lib/firestoreAudit.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
