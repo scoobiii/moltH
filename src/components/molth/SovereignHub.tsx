@@ -66,7 +66,7 @@ export default function SovereignHub() {
       const saved = localStorage.getItem(`${STORAGE_KEY}_user`)
       if (saved) {
         const parsed = JSON.parse(saved)
-        // Never allow cached sessions with simulated root/owner roles to bypass real auth
+        // Never allow cached sessions with cached root/owner roles to bypass real auth
         if (parsed?.isLoggedIn && parsed?.provider !== "guest") {
           return parsed
         }
