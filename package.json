@@ -4,12 +4,12 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
+    "dev": "tsx server-yai.ts",
     "bootstrap": "tsx scripts/bootstrap_env.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
-    "start": "node dist/server.cjs",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs && esbuild server-yai.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server-yai.cjs",
+    "start": "NODE_ENV=production node dist/server-yai.cjs",
     "preview": "vite preview",
-    "clean": "rm -rf dist server.cjs",
+    "clean": "rm -rf dist server.cjs server-yai.cjs",
     "test": "vitest run && tsx tests/gos3_full_coverage.test.ts",
     "test:vitest": "vitest run",
     "test:sprint0": "vitest run src/server/vortexContract.sprint0.test.ts",
@@ -48,6 +48,8 @@
     "tsx": "^4.21.0",
     "typescript": "~5.8.2",
     "vite": "^6.2.3",
-    "vitest": "^4.1.11"
+    "vitest": "^4.1.11",
+    "@types/react": "^19.2.0",
+    "@types/react-dom": "^19.2.0"
   }
 }
