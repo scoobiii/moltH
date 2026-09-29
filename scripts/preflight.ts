@@ -39,10 +39,10 @@ for (const [name, args] of commands) {
   }
 }
 
-if (process.env.VUA_PREFLIGHT_EXECUTED !== "true") {
-  console.error("PREFLIGHT_FAIL: VUA_PREFLIGHT_UNAVAILABLE; real gateway execution and independent ExecutionProof verification were not provided.");
-  console.error("Only a real VUA gateway adapter may set VUA_PREFLIGHT_EXECUTED=true after independently verifying its ExecutionProof.");
+if (process.env.VUC_PREFLIGHT_EXECUTED !== "true") {
+  console.error("PREFLIGHT_FAIL: VUC_PREFLIGHT_UNAVAILABLE; real gateway execution and independent ExecutionProof verification were not provided.");
+  console.error("Only a real VUC gateway/runtime adapter may set VUC_PREFLIGHT_EXECUTED=true after independently verifying its ExecutionProof.");
   process.exit(40);
 }
 
-console.log("PREFLIGHT_PASS: local gates passed and VUA preflight was externally attested.");
+console.log("PREFLIGHT_PASS: local gates passed and VUC preflight was externally attested.");
