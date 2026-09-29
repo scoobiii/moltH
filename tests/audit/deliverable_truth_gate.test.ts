@@ -28,6 +28,14 @@ describe('GOS3 DELIVERABLE-TRUTH GATE — Domínios Protegidos P0 & Regra 7', ()
     const prodFile = classifyFilePath('src/server/security/settlementEngine.ts');
     expect(prodFile.isTestOrFixture).toBe(false);
     expect(prodFile.isProduction).toBe(true);
+
+    const absoluteProdFile = classifyFilePath('/src/server/security/settlementEngine.ts');
+    expect(absoluteProdFile.isTestOrFixture).toBe(false);
+    expect(absoluteProdFile.isProduction).toBe(true);
+
+    const nestedProdFile = classifyFilePath('/workspace/src/server/security/settlementEngine.ts');
+    expect(nestedProdFile.isTestOrFixture).toBe(false);
+    expect(nestedProdFile.isProduction).toBe(true);
   });
 
   it('permite dados de mock/fixture dentro da pasta tests/ sem gerar violação P0', () => {
