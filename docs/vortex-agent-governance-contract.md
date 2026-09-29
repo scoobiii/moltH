@@ -14,7 +14,7 @@ The agent must never claim that it:
 - contacted a remote provider;
 - measured physical hardware;
 
-unless the VUA returned a verified remote confirmation or a signed local measurement with the required environment fields.
+unless the VUC returned a verified remote confirmation or a signed local measurement with the required environment fields.
 
 ## Fail closed
 
