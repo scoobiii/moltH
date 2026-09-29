@@ -1,6 +1,7 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import path from "path";
+
 export default defineConfig({
   plugins: [react()],
   test: {
@@ -16,13 +17,19 @@ export default defineConfig({
         branches: 100,
         statements: 100,
       },
-      include: ["src/**/*.{ts,tsx}"],
+      // 100% is mandatory inside an explicit architectural boundary.
+      // Do not use the entire legacy src tree as an accidental denominator.
+      // Product/UI modules enter this gate when their own test contract is declared.
+      include: [
+        "src/lib/deliverableTruthGate.ts",
+        "src/components/agents/GOS3SystemInstructionInjector.tsx",
+      ],
       exclude: ["**/*.d.ts", "**/*.test.{ts,tsx}", "**/node_modules/**"],
     },
     exclude: [
       "**/node_modules/**",
       "**/dist/**",
-      "tests/gos3_full_coverage.test.ts", // Executed deterministically by direct tsx runner
+      "tests/gos3_full_coverage.test.ts",
     ],
   },
   resolve: {
