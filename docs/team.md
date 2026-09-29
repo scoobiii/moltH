@@ -36,7 +36,7 @@ When Claude participates in GOS3, its role is **Technical Architect / Governance
 Reviewer**: architecture, contracts, documentation and proof review.
 
 Claude is not the approval authority and must not claim repository or external
-execution without VUA evidence.
+execution without VUC evidence.
 
 ## Connector policy
 
@@ -44,19 +44,20 @@ A connector is a capability, not an agent identity.
 
 Supported states:
 - `native_connector`
-- `vua_connector`
+- `vuc_connector`
+- `mcp_vuc`
 - `url_gateway`
 - `none`
 
 GitHub, web/search, shell/VPS, cloud, database, storage, email and other
 external systems must be accessed through an authenticated connector or the
-VUA gateway with explicit scope.
+VUC MCP/HTTP gateway with explicit scope.
 
 A model without a native connector may use:
 
-`LLM -> HTTPS VUA Gateway -> authenticated connector -> external system`
+`LLM -> MCP or HTTPS -> VUC -> authenticated connector -> external system`
 
-The LLM does not receive connector credentials.
+The LLM does not receive connector credentials; VUC resolves identity, capability, policy, scope and proof.
 
 ## Verification status
 
