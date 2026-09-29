@@ -18,24 +18,19 @@ export const qwen05bPolicy: ModelPolicy = {
 };
 
 export const moltHAgentModelBindings: AgentModelBinding[] = [
-  ["dev", "Lucas_Dev", "developer", ["coding"]],
-  ["vuc-test", "Bruno_Test", "vuc-test", ["verification"]],
-  ["vuc-user", "Rafael_VUC", "vuc-user", ["vuc"]],
-  ["dev-po", "Marina_PO", "product-owner", ["product"]],
-  ["dev-sm", "Camila_SM", "scrum-master", ["planning"]],
-  ["dev-arch", "André_Arch", "architect", ["architecture"]],
-  ["dev-be", "Diego_BE", "backend", ["backend"]],
-  ["dev-fe", "Pedro_FE", "frontend", ["frontend"]],
-  ["dev-qa", "Juliana_QA", "qa", ["testing"]],
-  ["dev-sec", "Felipe_Sec", "security", ["security"]],
-  ["dev-devops", "Gustavo_DevOps", "devops", ["devops"]],
-  ["dev-data", "Renata_Data", "data", ["data"]],
-].map(([agent_id, persona_id, persona, skills]) => ({
-  agent_id,
-  model_policy_id: QWEN_05B_POLICY_ID,
-  persona_id: persona,
-  skills,
-}));
+  { agent_id: "dev", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "developer", skills: ["coding"] },
+  { agent_id: "vuc-test", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "vuc-test", skills: ["verification"] },
+  { agent_id: "vuc-user", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "vuc-user", skills: ["vuc"] },
+  { agent_id: "dev-po", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "product-owner", skills: ["product"] },
+  { agent_id: "dev-sm", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "scrum-master", skills: ["planning"] },
+  { agent_id: "dev-arch", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "architect", skills: ["architecture"] },
+  { agent_id: "dev-be", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "backend", skills: ["backend"] },
+  { agent_id: "dev-fe", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "frontend", skills: ["frontend"] },
+  { agent_id: "dev-qa", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "qa", skills: ["testing"] },
+  { agent_id: "dev-sec", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "security", skills: ["security"] },
+  { agent_id: "dev-devops", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "devops", skills: ["devops"] },
+  { agent_id: "dev-data", model_policy_id: QWEN_05B_POLICY_ID, persona_id: "data", skills: ["data"] },
+];
 
 export function getAgentModelBinding(agentId: string): AgentModelBinding {
   const binding = moltHAgentModelBindings.find((item) => item.agent_id === agentId);
