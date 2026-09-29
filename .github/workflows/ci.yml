@@ -20,13 +20,31 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: "npm"
+
+      - name: Setup Bun (Fast & Deterministic)
+        uses: oven-sh/setup-bun@v2
+        if: hashFiles('bun.lock') != ''
+        with:
+          bun-version: latest
 
       - name: Install Dependencies
-        run: npm ci
+        run: |
+          if command -v bun >/dev/null 2>&1 && [ -f bun.lock ]; then
+            echo "Installing via Bun (frozen lockfile)..."
+            bun install --frozen-lockfile
+          elif [ -f package-lock.json ]; then
+            echo "Installing via npm ci..."
+            npm ci
+          else
+            echo "Installing via npm install..."
+            npm install
+          fi
 
       - name: TypeScript Lint / Compilation Check
         run: npm run lint
+
+      - name: Deliverable Truth Gate (ADR-006)
+        run: python3 scripts/deliverable_truth_gate.py --root .
 
       - name: Production Build Test (Vite + esbuild)
         run: npm run build
@@ -34,11 +52,17 @@ jobs:
       - name: Vitest Comprehensive Audit Suite
         run: npx vitest run
 
+      - name: 100% Code Coverage Gate
+        run: npm run test:coverage
+
+      - name: Vortex Enforcement / Deliverable Truth / DREX P0 Gate
+        run: npx vitest run tests/compliance/deliverable_truth_gate.test.ts
+
       - name: GOS3 Unified Full Coverage & 25 Deterministic Tools
         run: npx tsx tests/gos3_full_coverage.test.ts
 
       - name: GOS3 Contract Gate & ADR-003 Runtime ID
-        run: npx vitest run tests/contract_gate.test.ts
+        run: npx vitest run src/server/vortexContract.sprint0.test.ts
 
       - name: Micro-Benchmarks & Hard Stress Test (5,000 ops)
         run: node tests/bench_hard.mjs

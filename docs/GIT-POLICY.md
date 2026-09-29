@@ -34,18 +34,20 @@ Never use `git push --force` on `main`.
 
 A session must not run `git pull --rebase` while it has unstaged/uncommitted work. The work must either be committed as a coherent unit or stashed with `-u` before synchronization.
 
-## 3. Push gate (ADR-004: Green-to-Main Gate)
+## 3. Push gate (ADR-004: Green-to-Main Gate & ADR-006: DELIVERABLE-TRUTH)
 
-Em conformidade estrita com o **ADR-004** (`docs/ADR-004-BRANCH-PROTECTION-CI-GATE.md` e `docs/decisions.md`), um push ou merge em `main` é permitido única e exclusivamente quando:
+Em conformidade estrita com o **ADR-004** e o **ADR-006** (`docs/ADR-006-DELIVERABLE-TRUTH-GATE.md`), um push ou merge em `main` é permitido única e exclusivamente quando:
 
 1. As alterações locais estão preservadas e sincronizadas;
 2. `origin/main` foi buscado (`fetch`) imediatamente antes do push;
 3. O `main` local foi rebaseado no `origin/main` recente;
 4. O working tree está no estado canônico esperado;
 5. **Portão de CI 100% Verde (ADR-004)**: Todos os testes automatizados (`npm test` / `vitest`) e o linter (`npx tsc --noEmit`) passaram com exit code 0;
-6. O `evidence_hash = sha256(stdout + stderr + exit_code + duration_ms)` do run de testes foi computado e registrado;
-7. Nenhum segredo, mock mascarado ou arquivo gerado temporário foi staged;
-8. É estritamente proibido o uso de `git push --force` ou `--no-verify`.
+6. **Portão DELIVERABLE-TRUTH (ADR-006)**: Validação com `COMPLIANCE_PASS` em todos os domínios P0 (`wallet`, `pix`, `drex`, `financial`, `banking`, `payment`, `settlement`, `balance`, `account`, `secret`, `credential`);
+7. **Regra 7 Vinculante**: Proibido declarar `PASS` ou aprovação com bloqueio de deliverable-truth pendente;
+8. O `evidence_hash = sha256(stdout + stderr + exit_code + duration_ms)` do run de testes foi computado e registrado;
+9. Nenhum segredo, mock mascarado ou arquivo gerado temporário foi staged;
+10. É estritamente proibido o uso de `git push --force` ou `--no-verify`.
 
 ## 4. Divergence handling
 
@@ -119,3 +121,9 @@ Automation must fail closed on conflicts, failed tests, or ambiguous state. It m
 GitHub rejects non-fast-forward pushes when the remote contains commits that the local branch does not contain, specifically to prevent loss of remote history. Fetching and integrating the remote work before pushing is the required safety boundary.
 
 This policy exists because multiple GOS3 sessions can commit concurrently. The remote repository is the shared coordination point; every publisher must synchronize against it immediately before publication.
+
+---
+
+## 10. Vortex Enforcement e P0
+
+Push/merge em `main` também exige Vortex Enforcement PASS, Deliverable Truth PASS e, para P0, runtime evidence + revisão independente + aprovação humana. Nunca usar force-push, `--no-verify`, mascarar testes ou declarar PASS por texto da LLM.
