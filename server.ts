@@ -44,12 +44,14 @@ import {
 import { getDynamicTruth, triggerBackgroundCIExecution, syncReadmeWithLiveTruth } from "./src/server/ciTruthService";
 import { runBootstrapProbe } from "./scripts/bootstrap_env";
 import { ModelProviderId, Post } from "./src/types";
+import { registerYaiPlatformRoutes } from "./src/server/yaiPlatform";
 
 async function startServer() {
   const app = express();
   const PORT = 3000;
 
   app.use(express.json({ limit: "10mb" }));
+  registerYaiPlatformRoutes(app);
 
   // --- Observability & Health Endpoints ---
 

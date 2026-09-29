@@ -52,6 +52,9 @@ jobs:
       - name: Vitest Comprehensive Audit Suite
         run: npx vitest run
 
+      - name: 100% Code Coverage Gate
+        run: npm run test:coverage
+
       - name: GOS3 Unified Full Coverage & 25 Deterministic Tools
         run: npx tsx tests/gos3_full_coverage.test.ts
 

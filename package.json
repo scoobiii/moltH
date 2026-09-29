@@ -4,19 +4,20 @@
   "version": "0.0.0",
   "type": "module",
   "scripts": {
-    "dev": "tsx server.ts",
+    "dev": "tsx server-yai.ts",
     "bootstrap": "tsx scripts/bootstrap_env.ts",
-    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs",
-    "start": "node dist/server.cjs",
+    "build": "vite build && esbuild server.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server.cjs && esbuild server-yai.ts --bundle --platform=node --format=cjs --packages=external --sourcemap --outfile=dist/server-yai.cjs",
+    "start": "NODE_ENV=production node dist/server-yai.cjs",
     "preview": "vite preview",
-    "clean": "rm -rf dist server.cjs",
+    "clean": "rm -rf dist server.cjs server-yai.cjs",
     "test": "vitest run && tsx tests/gos3_full_coverage.test.ts",
     "test:vitest": "vitest run",
     "test:sprint0": "vitest run src/server/vortexContract.sprint0.test.ts",
     "test:ci": "vitest run && tsx tests/gos3_full_coverage.test.ts && node tests/bench_hard.mjs && node tests/stress_degrade.mjs && tsx tests/audit/verify_readme_truth.ts",
     "test:matrix": "tsx tests/audit/verify_readme_truth.ts",
     "lint": "tsc --noEmit",
-    "preflight": "tsx scripts/preflight.ts"
+    "preflight": "tsx scripts/preflight.ts",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text --coverage.reporter=json-summary"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
