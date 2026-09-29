@@ -15,7 +15,8 @@
     "test:sprint0": "vitest run src/server/vortexContract.sprint0.test.ts",
     "test:ci": "vitest run && tsx tests/gos3_full_coverage.test.ts && node tests/bench_hard.mjs && node tests/stress_degrade.mjs && tsx tests/audit/verify_readme_truth.ts",
     "test:matrix": "tsx tests/audit/verify_readme_truth.ts",
-    "lint": "tsc --noEmit"
+    "lint": "tsc --noEmit",
+    "preflight": "tsx scripts/preflight.ts"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
@@ -28,9 +29,9 @@
     "jose": "^6.2.10",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
+    "recharts": "^3.10.1",
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
-    "recharts": "^3.10.1",
     "zod": "^4.5.4"
   },
   "devDependencies": {
@@ -41,7 +42,7 @@
     "@vitest/coverage-v8": "^4.1.11",
     "autoprefixer": "^10.4.21",
     "esbuild": "^0.25.0",
-    "jsdom": "^30.0.1",
+    "jsdom": "^30.1.0",
     "tailwindcss": "^4.1.14",
     "text-encoding": "^0.7.0",
     "tsx": "^4.21.0",
