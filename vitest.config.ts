@@ -1,6 +1,8 @@
 import { defineConfig } from "vitest/config";
 import react from "@vitejs/plugin-react";
 import path from "path";
+import policy from "./coverage.policy.json";
+
 export default defineConfig({
   plugins: [react()],
   test: {
@@ -10,19 +12,20 @@ export default defineConfig({
     coverage: {
       provider: "v8",
       reporter: ["text", "json-summary", "json"],
+      include: policy.gate,
       thresholds: {
         lines: 100,
         functions: 100,
         branches: 100,
         statements: 100,
+        perFile: true,
       },
-      include: ["src/**/*.{ts,tsx}"],
       exclude: ["**/*.d.ts", "**/*.test.{ts,tsx}", "**/node_modules/**"],
     },
     exclude: [
       "**/node_modules/**",
       "**/dist/**",
-      "tests/gos3_full_coverage.test.ts", // Executed deterministically by direct tsx runner
+      "tests/gos3_full_coverage.test.ts",
     ],
   },
   resolve: {

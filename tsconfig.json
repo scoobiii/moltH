@@ -21,7 +21,12 @@
       ]
     },
     "allowImportingTsExtensions": true,
-    "noEmit": true
+    "noEmit": true,
+    "resolveJsonModule": true
   },
-  "exclude": ["node_modules", "dist", "vortex/src/agents/**/tests/*"]
+  "exclude": [
+    "node_modules",
+    "dist",
+    "vortex/src/agents/**/tests/*"
+  ]
 }

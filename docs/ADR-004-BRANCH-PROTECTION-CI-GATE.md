@@ -81,3 +81,23 @@ O CI não decide sozinho que uma entrega é verdadeira. Nenhuma alteração pode
 - **ADR-006 (DELIVERABLE-TRUTH GATE)**: Impõe o bloqueio estrutural de mocks financeiros e estabelece a Regra 7.
 - **docs/GIT-POLICY.md**: O push gate do repositório passa a ter ancoragem formal nesta ADR-004 e ADR-006.
 - **docs/PLAYBOOK.md**: A seção 5 (Merge Gates) passa a ser a implementação operacional desta decisão.
+
+---
+
+## 4. Vortex Enforcement — Deliverable Truth
+
+A partir desta integração, o Vortex Enforcement Gate é vinculante para operações `CREATE`, `EDIT`, `DELETE`, `MOVE`, `RENAME`, `REPLACE`, `EXECUTE`, `PUBLISH` e `MERGE`.
+
+Decisões possíveis: `ALLOW | BLOCK | REQUIRE_REVIEW | REQUIRE_HUMAN_APPROVAL | QUARANTINE`.
+
+Regra operacional: **MEXEU → ACHOU ERRO → CONSERTA.**
+
+P0 inclui DREX, PIX, wallet, payment/banking/settlement, financial/balance/account/money, secrets/credentials/authentication/authorization e security.
+
+P0 exige runtime evidence, testes afetados, revisão independente e aprovação humana antes de `main`.
+
+Mocks/fixtures/simulations são permitidos somente no escopo de teste. Mock/fake/simulation/stub em implementação de produção é bloqueado. Teste com mock não prova implementação real.
+
+Fluxo de incidente: `INCIDENT → BLOCK/QUARANTINE → CORRECTION → INDEPENDENT REVIEW → CI → COMPLIANCE PASS → HUMAN APPROVAL → MAIN`.
+
+Nenhuma LLM é autoridade para declarar PASS, executed, complete ou production-ready; essas propriedades devem ser determinadas por runtime, verificadores, CI e governança.

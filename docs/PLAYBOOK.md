@@ -83,6 +83,22 @@ Em conformidade estrita com o **ADR-006** (`docs/ADR-006-DELIVERABLE-TRUTH-GATE.
    > **Nenhum agente pode declarar PASS, implemented, complete, production-ready ou equivalente quando o entregável estiver bloqueado por DELIVERABLE-TRUTH, mesmo que compilação e testes convencionais passem.**
 5. **Portão Duplo de Aprovação**: Para `main`, é compulsória a aprovação em ambos: `CI PASS` + `DELIVERABLE-TRUTH COMPLIANCE PASS`.
 
+---
 
+## 8. Vortex Enforcement — Regra Vinculante
 
+A partir desta integração, o Vortex Enforcement Gate é vinculante para operações `CREATE`, `EDIT`, `DELETE`, `MOVE`, `RENAME`, `REPLACE`, `EXECUTE`, `PUBLISH` e `MERGE`.
 
+Decisões possíveis: `ALLOW | BLOCK | REQUIRE_REVIEW | REQUIRE_HUMAN_APPROVAL | QUARANTINE`.
+
+Regra operacional: **MEXEU → ACHOU ERRO → CONSERTA.**
+
+P0 inclui DREX, PIX, wallet, payment/banking/settlement, financial/balance/account/money, secrets/credentials/authentication/authorization e security.
+
+P0 exige runtime evidence, testes afetados, revisão independente e aprovação humana antes de `main`.
+
+Mocks/fixtures/simulations são permitidos somente no escopo de teste. Mock/fake/simulation/stub em implementação de produção é bloqueado. Teste com mock não prova implementação real.
+
+Fluxo de incidente: `INCIDENT → BLOCK/QUARANTINE → CORRECTION → INDEPENDENT REVIEW → CI → COMPLIANCE PASS → HUMAN APPROVAL → MAIN`.
+
+Nenhuma LLM é autoridade para declarar PASS, executed, complete ou production-ready; essas propriedades devem ser determinadas por runtime, verificadores, CI e governança.

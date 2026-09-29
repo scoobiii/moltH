@@ -1,0 +1,80 @@
+{
+  "gate": [
+    "src/server/mexAgents.ts",
+    "src/lib/deliverableTruthGate.ts"
+  ],
+  "pending": {
+    "src/lib/crypto.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/lib/deviceEnvironment.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/lib/executionChain.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/lib/firestoreAudit.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/lib/sovereignVault.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/lib/vortexGateway.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agentRunner.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/AgentRegistry.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/BiAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/CommercialAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/ComplianceAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/CrmAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/DbAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/ErpAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/FinanceAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/HumanAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/IpoAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/MktAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/agents/business/SupportAgent.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/ciTruthService.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/cluster.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/detectLocalLLMs.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/externalGateway.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/formalVerifier.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/gemini.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/githubSyncService.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/gos3Service.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/k6Runner.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/localSmallLLM.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/mcp/yaiChaosRunner.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/mcpService.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/middleware/authz.ts": "cobertura conhecida ~15%; mover para gate somente com 100%",
+    "src/server/middleware/rateLimit.ts": "cobertura de branches pendente; mover para gate somente com 100%",
+    "src/server/modelGateway.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/n8nVoiceService.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/openClawService.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/orchestrator/acceptanceTest.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/orchestrator/multiAgentPipeline.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/orchestrator/taskState.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/persistence.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/promptEngine.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/repoAnalyzer.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/sandbox.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/security/durableEvidenceStore.ts": "cobertura conhecida ~80%; mover para gate somente com 100%",
+    "src/server/socialThreader.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/storage.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/vectorMemory.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/vortexContract.ts": "cobertura conhecida ~60%; mover para gate somente com 100%",
+    "src/server/vortexResilient.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/server/yaiPlatform.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/services/connectorsService.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/services/firebase.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/services/githubDocsSyncService.ts": "cobertura ainda não é gate; mover para gate somente com 100%",
+    "src/services/vpsAgentClient.ts": "cobertura ainda não é gate; mover para gate somente com 100%"
+  },
+  "excluded": {
+    "src/App.tsx": {
+      "reason": "composição de UI",
+      "owner": "frontend"
+    },
+    "src/main.tsx": {
+      "reason": "entrypoint",
+      "owner": "frontend"
+    },
+    "src/components/**": {
+      "reason": "UI legada sem teste de render",
+      "owner": "frontend"
+    },
+    "src/context/**": {
+      "reason": "UI",
+      "owner": "frontend"
+    }
+  }
+}

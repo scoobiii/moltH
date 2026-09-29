@@ -4,7 +4,6 @@ import { join } from 'path';
 import {
   P0_PROTECTED_DOMAINS,
   classifyFilePath,
-  detectP0Domains,
   auditFileForDeliverableTruth,
   evaluateDeliverableTruth,
   assertCanDeclarePass,
@@ -15,22 +14,10 @@ import {
 describe('GOS3 DELIVERABLE-TRUTH GATE — Domínios Protegidos P0 & Regra 7', () => {
   it('reconhece todos os domínios protegidos P0 incluindo DREX, PIX e Liquidação', () => {
     const required = [
-      'wallet',
-      'pix',
-      'drex',
-      'financial',
-      'banking',
-      'payment',
-      'settlement',
-      'balance',
-      'account',
-      'secret',
-      'credential'
+      'wallet', 'pix', 'drex', 'financial', 'banking', 'payment',
+      'settlement', 'balance', 'account', 'secret', 'credential'
     ];
-
-    for (const req of required) {
-      expect(P0_PROTECTED_DOMAINS).toContain(req);
-    }
+    for (const req of required) expect(P0_PROTECTED_DOMAINS).toContain(req);
   });
 
   it('diferencia rigorosamente TEST FIXTURE / MOCK de PRODUCTION IMPLEMENTATION', () => {
@@ -41,6 +28,14 @@ describe('GOS3 DELIVERABLE-TRUTH GATE — Domínios Protegidos P0 & Regra 7', ()
     const prodFile = classifyFilePath('src/server/security/settlementEngine.ts');
     expect(prodFile.isTestOrFixture).toBe(false);
     expect(prodFile.isProduction).toBe(true);
+
+    const absoluteProdFile = classifyFilePath('/src/server/security/settlementEngine.ts');
+    expect(absoluteProdFile.isTestOrFixture).toBe(false);
+    expect(absoluteProdFile.isProduction).toBe(true);
+
+    const nestedProdFile = classifyFilePath('/workspace/src/server/security/settlementEngine.ts');
+    expect(nestedProdFile.isTestOrFixture).toBe(false);
+    expect(nestedProdFile.isProduction).toBe(true);
   });
 
   it('permite dados de mock/fixture dentro da pasta tests/ sem gerar violação P0', () => {
@@ -80,55 +75,39 @@ describe('GOS3 DELIVERABLE-TRUTH GATE — Domínios Protegidos P0 & Regra 7', ()
   });
 
   it('bloqueia o agente e gera status P0_INCIDENT_FAIL se mock financeiro escapar para src/', () => {
-    const files = [
-      {
-        path: 'src/lib/fakePayment.ts',
-        content: `export const mockPayment = { pix: "user@bank.com", balance: 500 };`
-      }
-    ];
-
-    const result = evaluateDeliverableTruth(files);
+    const result = evaluateDeliverableTruth([{
+      path: 'src/lib/fakePayment.ts',
+      content: `export const mockPayment = { pix: "user@bank.com", balance: 500 };`
+    }]);
     expect(result.status).toBe('P0_INCIDENT_FAIL');
     expect(result.agentBlocked).toBe(true);
     expect(result.p0Violations.length).toBeGreaterThan(0);
   });
 
   it('aplica a REGRA 7 VINCULANTE: impede declaração de PASS se bloqueado por DELIVERABLE-TRUTH', () => {
-    const failedGate = evaluateDeliverableTruth([
-      {
-        path: 'src/server/security/compromisedVault.ts',
-        content: `export const mockWallet = { pix: "bad@domain", balance: 100 };`
-      }
-    ]);
+    const failedGate = evaluateDeliverableTruth([{
+      path: 'src/server/security/compromisedVault.ts',
+      content: `export const mockWallet = { pix: "bad@domain", balance: 100 };`
+    }]);
 
     expect(failedGate.status).toBe('P0_INCIDENT_FAIL');
-
-    // Tentativa de declarar sucesso/PASS deve disparar erro fatal
-    expect(() => {
-      assertCanDeclarePass('PASS - Todos os testes de compilação passaram', failedGate);
-    }).toThrow(DeliverableTruthViolationError);
-
-    expect(() => {
-      assertCanDeclarePass('Sistema production-ready implementado', failedGate);
-    }).toThrow(DeliverableTruthViolationError);
+    expect(() => assertCanDeclarePass('PASS - Todos os testes de compilação passaram', failedGate))
+      .toThrow(DeliverableTruthViolationError);
+    expect(() => assertCanDeclarePass('Sistema production-ready implementado', failedGate))
+      .toThrow(DeliverableTruthViolationError);
   });
 
   it('permite declaração de PASS apenas quando COMPLIANCE_PASS for atingido', () => {
-    const passedGate = evaluateDeliverableTruth([
-      {
-        path: 'src/lib/sovereignVault.ts',
-        content: `export function sealEnvelope(payload: unknown) { return { runtime_id: '427273fd' }; }`
-      }
-    ]);
+    const passedGate = evaluateDeliverableTruth([{
+      path: 'src/lib/sovereignVault.ts',
+      content: `export function sealEnvelope(payload: unknown) { return { runtime_id: '427273fd' }; }`
+    }]);
 
     expect(passedGate.status).toBe('COMPLIANCE_PASS');
-    expect(() => {
-      assertCanDeclarePass('PASS - Código verificado', passedGate);
-    }).not.toThrow();
+    expect(() => assertCanDeclarePass('PASS - Código verificado', passedGate)).not.toThrow();
   });
 
   it('reprova o padrão de recriar mock após tsc FAIL e valida a regra MEXEU -> ACHOU ERRO -> CONSERTA', () => {
-    // Caso 1: O comportamento do agente lambanceiro (recriar para calar o tsc)
     const badDecision = evaluateRefactoringDecision({
       detectedMock: true,
       consumersCount: 2,
@@ -138,7 +117,6 @@ describe('GOS3 DELIVERABLE-TRUTH GATE — Domínios Protegidos P0 & Regra 7', ()
     expect(badDecision.allowed).toBe(false);
     expect(badDecision.nextStep).toBe('BLOCK');
 
-    // Caso 2: O comportamento canônico CORRECTION REQUIRED
     const correctDecision = evaluateRefactoringDecision({
       detectedMock: true,
       consumersCount: 2,
@@ -149,6 +127,17 @@ describe('GOS3 DELIVERABLE-TRUTH GATE — Domínios Protegidos P0 & Regra 7', ()
     expect(correctDecision.nextStep).toBe('MIGRATE');
   });
 
+  it('cobre o caminho PROCEED quando a correção não exige migração', () => {
+    const decision = evaluateRefactoringDecision({
+      detectedMock: false,
+      consumersCount: 0,
+      tscPassed: true,
+      actionProposed: 'MIGRATE_AND_FIX'
+    });
+    expect(decision.allowed).toBe(true);
+    expect(decision.nextStep).toBe('PROCEED');
+  });
+
   it('audita os arquivos de produção atuais em src/ e certifica COMPLIANCE_PASS real', () => {
     function getAllFiles(dir: string): string[] {
       const results: string[] = [];
@@ -156,11 +145,8 @@ describe('GOS3 DELIVERABLE-TRUTH GATE — Domínios Protegidos P0 & Regra 7', ()
       for (const file of list) {
         const fullPath = join(dir, file);
         const stat = statSync(fullPath);
-        if (stat.isDirectory()) {
-          results.push(...getAllFiles(fullPath));
-        } else if (fullPath.endsWith('.ts') || fullPath.endsWith('.tsx')) {
-          results.push(fullPath);
-        }
+        if (stat.isDirectory()) results.push(...getAllFiles(fullPath));
+        else if (fullPath.endsWith('.ts') || fullPath.endsWith('.tsx')) results.push(fullPath);
       }
       return results;
     }
