@@ -56,7 +56,7 @@ jobs:
         run: npm run test:coverage
 
       - name: Vortex Enforcement / Deliverable Truth / DREX P0 Gate
-        run: npx vitest run tests/compliance/deliverable_truth_gate.test.ts
+        run: npx vitest run tests/audit/deliverable_truth_gate.test.ts
 
       - name: GOS3 Unified Full Coverage & 25 Deterministic Tools
         run: npx tsx tests/gos3_full_coverage.test.ts
