@@ -1,12 +1,7 @@
-import { existsSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 
-const required = [
-  "AGENTS.md",
-  "docs/team.md",
-  "docs/vortex-agent-governance-contract.md",
-];
-
+const required = ["AGENTS.md", "docs/team.md", "docs/vortex-agent-governance-contract.md"];
 for (const file of required) {
   if (!existsSync(file)) {
     console.error(`PREFLIGHT_FAIL: missing required governance file: ${file}`);
@@ -14,13 +9,13 @@ for (const file of required) {
   }
 }
 
-const contract = await Bun.file("docs/vortex-agent-governance-contract.md").text().catch(() => "");
+const contract = readFileSync("docs/vortex-agent-governance-contract.md", "utf8");
 if (!contract.includes("ExecutionProof") || !contract.includes("fail closed")) {
   console.error("PREFLIGHT_FAIL: governance contract markers are missing");
   process.exit(21);
 }
 
-const agents = await Bun.file("AGENTS.md").text().catch(() => "");
+const agents = readFileSync("AGENTS.md", "utf8");
 for (const marker of ["merkle_root", "Ed25519", "weights_sha256", "not_executed"]) {
   if (!agents.includes(marker)) {
     console.error(`PREFLIGHT_FAIL: AGENTS.md missing marker: ${marker}`);
@@ -32,7 +27,7 @@ const commands = [
   ["lint", ["run", "lint"]],
   ["build", ["run", "build"]],
   ["vitest", ["run", "test:vitest"]],
-];
+] as const;
 
 for (const [name, args] of commands) {
   console.log(`PREFLIGHT: running npm ${args.join(" ")}`);
@@ -45,12 +40,8 @@ for (const [name, args] of commands) {
 }
 
 if (process.env.VUA_PREFLIGHT_EXECUTED !== "true") {
-  console.error(
-    "PREFLIGHT_FAIL: VUA_PREFLIGHT_UNAVAILABLE; real gateway execution and independent ExecutionProof verification were not provided."
-  );
-  console.error(
-    "Set VUA_PREFLIGHT_EXECUTED=true only from a real VUA gateway adapter after independently verifying its ExecutionProof."
-  );
+  console.error("PREFLIGHT_FAIL: VUA_PREFLIGHT_UNAVAILABLE; real gateway execution and independent ExecutionProof verification were not provided.");
+  console.error("Only a real VUA gateway adapter may set VUA_PREFLIGHT_EXECUTED=true after independently verifying its ExecutionProof.");
   process.exit(40);
 }
 
