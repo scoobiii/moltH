@@ -16,7 +16,8 @@
     "test:ci": "vitest run && tsx tests/gos3_full_coverage.test.ts && node tests/bench_hard.mjs && node tests/stress_degrade.mjs && tsx tests/audit/verify_readme_truth.ts",
     "test:matrix": "tsx tests/audit/verify_readme_truth.ts",
     "lint": "tsc --noEmit",
-    "preflight": "tsx scripts/preflight.ts"
+    "preflight": "tsx scripts/preflight.ts",
+    "test:coverage": "vitest run --coverage --coverage.reporter=text --coverage.reporter=json-summary"
   },
   "dependencies": {
     "@google/genai": "^2.4.0",
