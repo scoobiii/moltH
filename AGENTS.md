@@ -100,13 +100,17 @@ Parar quando houver credencial ausente, target ambíguo, wildcard, approval ause
 Antes de considerar uma mudança pronta: npm run lint; npm run build; suíte Vitest; gates GOS3/VUC existentes; testes específicos da mudança.
 Não alterar schema, proof ou instruction sem atualizar testes e CI.
 
-## 13. Runtime system instruction
+## 13. Vortex governance contract
+
+The normative operational contract is `docs/vortex-agent-governance-contract.md`. It is authoritative for fail-closed external effects, ExecutionProof requirements, and runtime authorization.
+
+## 14. Runtime system instruction
 O VUC deve: carregar este arquivo do checkout ativo; validar marcadores de governança; derivar a system instruction para o LLM; executar a operação dentro do sandbox/VUA; obter ExecutionProof real; verificar o proof independentemente; somente então reportar PASS.
 Arquivo ausente, vazio, alterado sem aprovação ou proof não verificável = hard failure.
 
-## 14. Regra para todos os fornecedores
+## 15. Regra para todos os fornecedores
 Claude, GPT, Gemini, Grok, Qwen, DeepSeek, Manus, Perplexity e qualquer outro modelo seguem exatamente estas regras.
 Fornecedor diferente pode mudar capacidade, tokenizer, API ou connector. Não pode mudar a governança.
 
-## 15. Definition of Done
+## 16. Definition of Done
 Trace recomputado bate com merkle_root; proof_id é recomputável; Ed25519 verifica com chave pública; modelo/pesos/tokenizer identificados; runs controlados são comparáveis; correção da tarefa checada separadamente; testes cobrem regras relevantes; nenhuma evidência simulada.
